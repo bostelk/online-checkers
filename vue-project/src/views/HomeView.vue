@@ -6,8 +6,8 @@
     <p>Hi! 👋 Welcome to online checkers.</p>
     <br />
     <p>
-      You can create a new game or join an existing game. You can view public games a listed on the
-      right. GLHF 😊
+      You can create a <RouterLink to="/games/new">new game</RouterLink> or
+      <RouterLink to="/games">join an existing game</RouterLink>. GLHF 😊
     </p>
   </div>
 </template>
