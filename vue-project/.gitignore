@@ -31,3 +31,6 @@ coverage
 !.vscode/launch.json
 
 *.tsbuildinfo
+
+# Ignore vite hidden dir for now
+.vite
