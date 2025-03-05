@@ -5,8 +5,6 @@ import GamesBrowser from './components/GamesBrowser.vue'
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
     <div class="wrapper">
       <GamesBrowser />
 
@@ -18,7 +16,9 @@ import GamesBrowser from './components/GamesBrowser.vue'
     </div>
   </header>
 
-  <RouterView />
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <style scoped>

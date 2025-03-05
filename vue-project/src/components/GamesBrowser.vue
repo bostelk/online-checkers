@@ -40,7 +40,11 @@ onBeforeUnmount(() => {
     <h1>Games</h1>
     <ul>
       <li v-for="(game, id) in games">
-        <RouterLink :to="gamePath(id)">{{ id }}</RouterLink>
+        <RouterLink :to="gamePath(id)">{{ game.title }}</RouterLink>
+        <ul>
+          <li>{{ game.player1 }}</li>
+          <li>{{ game.player2 }}</li>
+        </ul>
       </li>
     </ul>
   </div>

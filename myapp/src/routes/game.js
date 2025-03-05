@@ -5,11 +5,18 @@ const { v4: uuidv4 } = require('uuid');
 // In-memory persistence.
 const games = {}
 
-const makeNewGame = (id, numRow, numCol, material) => {
+const makeNewGame = (id, title, password, broadcast, player1, player2, material, numRow, numCol) => {
+    let now = Date.now();
     let newGame = {
         id: id,
+        title: title,
+        password: password,
+        broadcast: broadcast,
+        player1: player1,
+        player2: player2,
         numCol: numCol,
         numRow: numRow,
+        material: material,
         checkers: [
             ['r', '', 'r', '', 'r', '', 'r', '', 'r'],
             ['', 'r', '', 'r', '', 'r', '', 'r', ''],
@@ -20,7 +27,9 @@ const makeNewGame = (id, numRow, numCol, material) => {
             ['b', '', 'b', '', 'b', '', 'b', '', 'b'],
             ['', 'b', '', 'b', '', 'b', '', 'b', ''],
           ],
-        moves: []   
+        moves: [],
+        created_at: now,
+        updated_at: now
     }
     return newGame
 }
@@ -33,6 +42,9 @@ const applyMove = (game, move) => {
     let value = game.checkers[move[1]][move[0]]
     game.checkers[move[3]][move[2]] = value
     game.checkers[move[1]][move[0]] = ''
+
+    let now = Date.now();
+    game.updated_at = now
 }
 
 // middleware that is specific to this router
@@ -43,11 +55,28 @@ const timeLog = (req, res, next) => {
 router.use(timeLog)
 
 router.get('/', (req, res) => {
-  res.json(games)
+    let filteredGames = {}
+    // filter
+    for (const [key, value] of Object.entries(games)) {
+        if (value.broadcast) {
+            delete value.password
+            filteredGames[key] = value
+        }
+    }
+  res.json(filteredGames)
 })
 router.post('/new', (req, res) => {
     let id = uuidv4()
-    let newGame = makeNewGame(id, 8, 8)
+    
+    // Read user input.
+    let title = req.body.title
+    let password = req.body.password
+    let broadcast = req.body.broadcast
+    let player1 = req.body.player1
+    let player2 = req.body.player2
+    let material = req.body.material
+
+    let newGame = makeNewGame(id, title, password, broadcast, player1, player2, material, 8, 8)
     games[id] = newGame
     res.json(newGame)
 })

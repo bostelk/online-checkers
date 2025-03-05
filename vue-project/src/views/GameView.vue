@@ -53,7 +53,7 @@ onMounted(() => {
 })
 
 const gameTitle = computed(() => {
-  return game.value ? game.value.id : 'Unknown'
+  return game.value ? game.value.title : 'Unknown'
 })
 </script>
 

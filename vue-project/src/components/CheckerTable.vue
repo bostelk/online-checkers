@@ -12,6 +12,7 @@ const emit = defineEmits({
 // Handle reactivity from GameView.
 const serverGame = inject('server-game')
 watch(serverGame, async (newGame, oldGame) => {
+  data.material = newGame.value.material
   data.checkers = newGame.value.checkers
 })
 
