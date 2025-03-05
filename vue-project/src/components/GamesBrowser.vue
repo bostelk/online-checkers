@@ -37,7 +37,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <h1>Games</h1>
     <ul>
       <li v-for="(game, id) in games">
         <RouterLink :to="gamePath(id)">{{ game.title }}</RouterLink>

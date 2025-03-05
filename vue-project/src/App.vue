@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import GamesBrowser from './components/GamesBrowser.vue'
 
 document.title = 'Checkers'
 </script>
@@ -8,12 +7,11 @@ document.title = 'Checkers'
 <template>
   <header>
     <div class="wrapper">
-      <GamesBrowser />
-
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/games/new">New Game</RouterLink>
+        <RouterLink to="/games">Join Game</RouterLink>
       </nav>
     </div>
   </header>
@@ -78,7 +76,7 @@ nav a:first-of-type {
 
   nav {
     text-align: left;
-    margin-left: -1rem;
+    margin-left: 0rem;
     font-size: 1rem;
 
     padding: 1rem 0;
