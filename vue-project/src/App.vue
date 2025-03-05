@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import GamesBrowser from './components/GamesBrowser.vue'
+
+document.title = 'Checkers'
 </script>
 
 <template>
