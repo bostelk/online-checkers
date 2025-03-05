@@ -1,19 +1,33 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, watch, inject } from 'vue'
+
+const emit = defineEmits({
+  move(oldX: number, oldY: number, newX: number, newY: number) {
+    // return `true` or `false` to indicate
+    // validation pass / fail
+    return true
+  },
+})
+
+// Handle reactivity from GameView.
+const serverGame = inject('server-game')
+watch(serverGame, async (newGame, oldGame) => {
+  data.checkers = newGame.value.checkers
+})
 
 const data = reactive({
   numCol: 8,
   numRow: 8,
   material: 'marble',
   checkers: [
-    ['r', '', 'r', '', 'r', '', 'r', '', 'r'],
-    ['', 'r', '', 'r', '', 'r', '', 'r', ''],
-    ['r', '', 'r', '', 'r', '', 'r', '', 'r'],
     ['', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', ''],
-    ['', 'b', '', 'b', '', 'b', '', 'b', ''],
-    ['b', '', 'b', '', 'b', '', 'b', '', 'b'],
-    ['', 'b', '', 'b', '', 'b', '', 'b', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', ''],
   ],
 })
 let g_drag = [-1, -1] // bad global
@@ -107,6 +121,7 @@ const moveChecker = (oldX: number, oldY: number, newX: number, newY: number) => 
     }
     setChecker(oldX, oldY, '') // Empty.
     setChecker(newX, newY, value)
+    emit('move', oldX, oldY, newX, newY)
   }
 }
 </script>
