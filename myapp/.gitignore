@@ -27,4 +27,7 @@ coverage
 *.sln
 *.sw?
 
+# Share launch configurations
+!.vscode/launch.json
+
 *.tsbuildinfo
