@@ -17,10 +17,10 @@ const data = reactive({
   ],
 })
 let g_drag = [-1, -1] // bad global
-const cellId = (x, y) => {
+const cellId = (x: number, y: number) => {
   return x + data.numRow * y
 }
-const cellName = (x, y) => {
+const cellName = (x: number, y: number) => {
   const debug = false
   if (debug) {
     return cellId(x, y)
@@ -28,7 +28,7 @@ const cellName = (x, y) => {
     return ''
   }
 }
-const getChecker = (x, y) => {
+const getChecker = (x: number, y: number) => {
   if (y >= 0 && y < data.checkers.length) {
     if (x >= 0 && x < data.checkers[y].length) {
       return data.checkers[y][x]
@@ -36,14 +36,14 @@ const getChecker = (x, y) => {
   }
   return null
 }
-const setChecker = (x, y, value) => {
+const setChecker = (x: number, y: number, value: string) => {
   if (y >= 0 && y < data.checkers.length) {
     if (x >= 0 && x < data.checkers[y].length) {
       data.checkers[y][x] = value
     }
   }
 }
-const checkerId = (x, y) => {
+const checkerId = (x: number, y: number) => {
   const value = getChecker(x, y)
   const valueToId = {
     r: 'red-checker',
@@ -54,29 +54,29 @@ const checkerId = (x, y) => {
   }
   return 'empty'
 }
-const getBoard = (x, y) => {
+const getBoard = (x: number, y: number) => {
   return (x + y) % 2 == 0
 }
-const boardId = (material, x, y) => {
+const boardId = (material: string, x: number, y: number) => {
   return material + '-' + (getBoard(x, y) ? 'black' : 'white')
 }
-const onDragCheckerPiece = (x, y, event) => {
+const onDragCheckerPiece = (x: number, y: number) => {
   console.log('dragging ' + cellId(x, y))
 }
-const onDragStartCheckerPiece = (x, y, event) => {
+const onDragStartCheckerPiece = (x: number, y: number) => {
   console.log('drag start ' + cellId(x, y))
   g_drag = [x, y]
 }
-const onDragEndCheckerPiece = (x, y, event) => {
+const onDragEndCheckerPiece = (x: number, y: number) => {
   console.log('drag end ' + cellId(x, y))
 }
-const onDragEnterCheckerPiece = (x, y, event) => {
+const onDragEnterCheckerPiece = (x: number, y: number) => {
   console.log('drag enter ' + cellId(x, y))
 }
-const onDragLeaveCheckerPiece = (x, y, event) => {
+const onDragLeaveCheckerPiece = (x: number, y: number) => {
   console.log('drag leave ' + cellId(x, y))
 }
-const onDragOverCheckerPiece = (x, y, event) => {
+const onDragOverCheckerPiece = (x: number, y: number, event: Event) => {
   console.log('drag over ' + cellId(x, y))
 
   if (isMoveValid(x, y)) {
@@ -84,7 +84,7 @@ const onDragOverCheckerPiece = (x, y, event) => {
     event.preventDefault()
   }
 }
-const onDropCheckerPiece = (x, y, event) => {
+const onDropCheckerPiece = (x: number, y: number, event: Event) => {
   console.log('drop ' + cellId(x, y))
 
   // prevent default action (open as link for some elements)
@@ -93,19 +93,20 @@ const onDropCheckerPiece = (x, y, event) => {
   // move dragged element to the selected drop target
   moveChecker(g_drag[0], g_drag[1], x, y)
 }
-const isCheckerDraggable = (x, y) => {
-  return getChecker(x, y) === 'b'
+const isCheckerDraggable = (x: number, y: number) => {
+  return getChecker(x, y) === 'b' // player's color.
 }
-const isMoveValid = (x, y) => {
+const isMoveValid = (x: number, y: number) => {
   return getBoard(x, y) && getChecker(x, y) === ''
 }
-const moveChecker = (oldX, oldY, newX, newY) => {
+const moveChecker = (oldX: number, oldY: number, newX: number, newY: number) => {
   if (isMoveValid(newX, newY)) {
     const value = getChecker(oldX, oldY)
-    console.log(value)
+    if (value === null) {
+      throw new Error('checker cannot be null')
+    }
     setChecker(oldX, oldY, '') // Empty.
     setChecker(newX, newY, value)
-    console.log(data.checkers)
   }
 }
 </script>
@@ -127,11 +128,11 @@ const moveChecker = (oldX, oldY, newX, newY) => {
           v-for="x in data.numCol"
           :id="checkerId(x - 1, y - 1)"
           :draggable="isCheckerDraggable(x - 1, y - 1)"
-          @drag="onDragCheckerPiece(x - 1, y - 1, $event)"
-          @dragstart="onDragStartCheckerPiece(x - 1, y - 1, $event)"
-          @dragend="onDragEndCheckerPiece(x - 1, y - 1, $event)"
-          @dragenter="onDragEnterCheckerPiece(x - 1, y - 1, $event)"
-          @dragleave="onDragLeaveCheckerPiece(x - 1, y - 1, $event)"
+          @drag="onDragCheckerPiece(x - 1, y - 1)"
+          @dragstart="onDragStartCheckerPiece(x - 1, y - 1)"
+          @dragend="onDragEndCheckerPiece(x - 1, y - 1)"
+          @dragenter="onDragEnterCheckerPiece(x - 1, y - 1)"
+          @dragleave="onDragLeaveCheckerPiece(x - 1, y - 1)"
           @dragover="onDragOverCheckerPiece(x - 1, y - 1, $event)"
           @drop="onDropCheckerPiece(x - 1, y - 1, $event)"
         >
