@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 onMounted(() => {
-  status.value = 'Connecting' // Assumed state.
+  status.value = 'Connecting' // Assumed autoconnect is enabled.
 })
 
 const registerEvents = (socket) => {
