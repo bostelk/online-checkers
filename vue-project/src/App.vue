@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import ConnectionIndicator from './components/ConnectionIndicator.vue'
 
 document.title = 'Checkers'
 
 import { io } from "socket.io-client"
-const socket = io("localhost:3000");
+const socket = io("localhost:3000")
 </script>
 
 <template>
   <header>
+    <ConnectionIndicator :socket="socket" />
+
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
