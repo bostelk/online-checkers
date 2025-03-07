@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, watchEffect, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { socket } from "@/socket";
 
 const status = ref('Unknown')
-const props = defineProps<{
-  socket: Socket<ServerToClientEvents, ClientToServerEvents>
-}>()
 
 onMounted(() => {
   status.value = 'Connecting' // Assumed autoconnect is enabled.
@@ -55,11 +53,7 @@ const registerEvents = (socket) => {
   })
 }
 
-watchEffect(() => {
-  if (props.socket) {
-    registerEvents(props.socket)
-  }
-})
+registerEvents(socket)
 
 const statusIconClass = computed(() => (status.value !== 'Online' ? 'problem' : ''))
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import CheckerTable from '../components/CheckerTable.vue'
 import { useRoute } from 'vue-router'
-import { ref, reactive, watch, computed, onMounted, provide } from 'vue'
+import { ref, reactive, watch, computed, onMounted, provide, props } from 'vue'
+import { socket } from "@/socket";
 
 const route = useRoute()
 const game = reactive({})
@@ -23,22 +24,13 @@ const fetchGame = async (id) => {
 }
 
 const postGameMove = async (oldX, oldY, newX, newY) => {
-  loading.value = true
-  try {
-    const payload = { move: [oldX, oldY, newX, newY] }
-    const res = await fetch('http://localhost:3000/games/' + game.value.id + '/move', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    const newGame = await res.json()
-    game.value = newGame
-  } catch (error) {
-    console.error('Error! Could not reach the API. ' + error)
-  } finally {
-    loading.value = false
-  }
+  const payload = { id: game.value.id, move: [oldX, oldY, newX, newY] }
+  socket.emit("game:moveChecker", payload)
 }
+
+socket.on("game", (newGame) => {
+  game.value = newGame
+})
 
 // fetch the game when params change
 watch(

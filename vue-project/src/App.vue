@@ -3,14 +3,11 @@ import { RouterLink, RouterView } from 'vue-router'
 import ConnectionIndicator from './components/ConnectionIndicator.vue'
 
 document.title = 'Checkers'
-
-import { io } from "socket.io-client"
-const socket = io("localhost:3000")
 </script>
 
 <template>
   <header>
-    <ConnectionIndicator :socket="socket" />
+    <ConnectionIndicator/>
 
     <div class="wrapper">
       <nav>
@@ -23,7 +20,7 @@ const socket = io("localhost:3000")
   </header>
 
   <main>
-    <RouterView />
+    <RouterView/>
   </main>
 </template>
 
