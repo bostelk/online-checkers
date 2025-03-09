@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { reactive, watch, inject } from 'vue'
 
+let playerColor = 'b' // Black goes first.
+
 const emit = defineEmits({
   move(oldX: number, oldY: number, newX: number, newY: number) {
     // return `true` or `false` to indicate
@@ -111,7 +113,18 @@ const onDropCheckerPiece = (x: number, y: number, event: Event) => {
   moveChecker(g_drag[0], g_drag[1], x, y)
 }
 const isCheckerDraggable = (x: number, y: number) => {
-  return getChecker(x, y) === 'b' || getChecker(x, y) === 'c' // player's color.
+  const colorMap = {
+    b: 'b',
+    c: 'c',
+    r: 'r',
+    s: 's'
+  }
+  const value = getChecker(x, y)
+  if (value !== null && value in colorMap) {
+    const myColor = colorMap[value]
+    return myColor === playerColor
+  }
+    return false
 }
 const isMoveValid = (x: number, y: number) => {
   return getBoard(x, y) && getChecker(x, y) === ''
@@ -125,6 +138,13 @@ const moveChecker = (oldX: number, oldY: number, newX: number, newY: number) => 
     setChecker(oldX, oldY, '') // Empty.
     setChecker(newX, newY, value)
     emit('move', oldX, oldY, newX, newY)
+
+    // Temp(kbostelmann): Switch player color.
+    if (playerColor === 'b') {
+      playerColor = 'r'
+    } else if (playerColor === 'r') {
+      playerColor = 'b'
+    }
   }
 }
 </script>
