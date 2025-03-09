@@ -1,6 +1,6 @@
-const { games, isMoveValid, applyMove } = require("../game.js")
+const { games, isMoveValid, applyMove } = require("../game")
 
-module.exports = (socketServer, socket) => {
+export default function handler (socketServer, socket) {
     const moveChecker = (payload) => {
         let { id, move } = payload
         let game = games[id]
@@ -12,4 +12,4 @@ module.exports = (socketServer, socket) => {
     }
   
     socket.on("game:moveChecker", moveChecker);
-  }
+}

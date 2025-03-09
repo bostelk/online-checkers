@@ -1,7 +1,7 @@
-const express = require('express')
-const router = express.Router()
-const { v4: uuidv4 } = require('uuid');
-const { games, makeNewGame, isMoveValid, applyMove } = require("../game.js")
+import express from 'express'
+export const router = express.Router()
+import { v4 as uuidv4 } from 'uuid'
+import { games, Game } from "../game"
 
 // middleware that is specific to this router
 const timeLog = (req, res, next) => {
@@ -14,8 +14,9 @@ router.get('/', (req, res) => {
     let filteredGames = {}
     // filter
     for (const [key, value] of Object.entries(games)) {
-        if (value.broadcast) {
-            delete value.password
+        let game = value as Game
+        if (game.broadcast) {
+            delete game.password
             filteredGames[key] = value
         }
     }
@@ -32,7 +33,7 @@ router.post('/new', (req, res) => {
     let player2 = req.body.player2
     let material = req.body.material
 
-    let newGame = makeNewGame(id, title, password, broadcast, player1, player2, material, 8, 8)
+    let newGame = new Game(id, title, password, broadcast, player1, player2, material, 8, 8)
     games[id] = newGame
     res.json(newGame)
 })
@@ -45,5 +46,3 @@ router.get('/:id', (req, res) => {
         res.status(404).send("Game not found!")
     }
 })
-
-module.exports = router

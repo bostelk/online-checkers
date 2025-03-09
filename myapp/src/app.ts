@@ -1,9 +1,11 @@
-const express = require("express");
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-const session = require("express-session");
-const { createHmac, randomBytes} = require('node:crypto');
-const registerGameHandlers = require("./handlers/gameHandler");
+import express from "express";
+import { type Request } from "express"
+import { createServer } from "http"
+import { Server } from "socket.io"
+import session from "express-session"
+import { createHmac, randomBytes } from "node:crypto"
+import registerGameHandlers from "./handlers/gameHandler"
+import { router as gameRouter } from "./routes/gameRouter"
 
 const config = {
   cors: {
@@ -18,7 +20,25 @@ const app = express();
 const port = 3000;
 
 const httpServer = createServer(app);
-const socketServer = new Server(httpServer, config);
+
+interface ServerToClientEvents {
+}
+
+interface ClientToServerEvents {
+}
+
+interface InterServerEvents {
+}
+
+interface SocketData {
+}
+
+const socketServer = new Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>(httpServer, config);
 
 const cors = require("cors");
 app.use(cors(config.cors));
@@ -34,7 +54,6 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 socketServer.engine.use(sessionMiddleware);
 
-const gameRouter = require("./routes/gameRouter");
 app.use("/games", gameRouter);
 
 app.get("/", (req, res) => {
@@ -42,7 +61,8 @@ app.get("/", (req, res) => {
 });
 
 socketServer.on("connection", (socket) => {
-  const sessionId = socket.request.session.id;
+  const req = socket.request as Request;
+  const sessionId = req.session.id;
   console.log("a user connected s:" + sessionId);
 
   registerGameHandlers(socketServer, socket)

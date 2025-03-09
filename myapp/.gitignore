@@ -31,3 +31,6 @@ coverage
 !.vscode/launch.json
 
 *.tsbuildinfo
+
+# TypeScript output
+build
