@@ -59,6 +59,14 @@ export class Game {
     let value = this.checkers[y][x]
     return value === 'c' || value === 's'
   }
+  getKing(color: string): string {
+    if (color === 'r') {
+      return 's'
+    } else if (color === 'b') {
+      return 'c'
+    }
+    throw new Error('invalid color: ' + color)
+  }
   getColor(x: number, y: number): string {
     let value = this.checkers[y][x]
     const colorMap = {
@@ -216,7 +224,8 @@ export class Game {
     return validMove
   }
   applyMove(move: CheckerMove) {
-    let opponentColor = this.getOppositeColor(this.getColor(move[0], move[1]))
+    let myColor = this.getColor(move[0], move[1])
+    let opponentColor = this.getOppositeColor(myColor)
     let delta = [move[2] - move[0], move[3] - move[1]]
 
     // Eat opponent.
@@ -233,6 +242,20 @@ export class Game {
     let value = this.checkers[move[1]][move[0]]
     this.checkers[move[3]][move[2]] = value
     this.checkers[move[1]][move[0]] = ''
+
+    // King maker
+    let kingRow = -1
+    if (myColor === 'r') {
+      kingRow = this.numRow - 1
+    } else if (myColor === 'b') {
+      kingRow = 0
+    } else {
+      throw new Error('unknown king row')
+    }
+
+    if (move[3] === kingRow) {
+      this.checkers[move[3]][move[2]] = this.getKing(myColor)
+    }
 
     let now = Date.now()
     this.updated_at = now

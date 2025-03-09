@@ -62,7 +62,9 @@ const checkerId = (x: number, y: number) => {
   const value = getChecker(x, y)
   const valueToId = {
     r: 'red-checker',
+    s: 'red-checker-king',
     b: 'black-checker',
+    c: 'black-checker-king'
   }
   if (value in valueToId) {
     return valueToId[value]
@@ -109,7 +111,7 @@ const onDropCheckerPiece = (x: number, y: number, event: Event) => {
   moveChecker(g_drag[0], g_drag[1], x, y)
 }
 const isCheckerDraggable = (x: number, y: number) => {
-  return getChecker(x, y) === 'b' // player's color.
+  return getChecker(x, y) === 'b' || getChecker(x, y) === 'c' // player's color.
 }
 const isMoveValid = (x: number, y: number) => {
   return getBoard(x, y) && getChecker(x, y) === ''
