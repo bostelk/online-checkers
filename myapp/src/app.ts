@@ -6,6 +6,7 @@ import session from "express-session"
 import { createHmac, randomBytes } from "node:crypto"
 import registerGameHandlers from "./handlers/gameHandler"
 import { router as gameRouter } from "./routes/gameRouter"
+import { CheckerMove } from "./game"
 
 const config = {
   cors: {
@@ -25,6 +26,7 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
+  moveChecker: (payload: { id:string, move: CheckerMove}) => {}
 }
 
 interface InterServerEvents {

@@ -1,7 +1,8 @@
 import express from 'express'
 export const router = express.Router()
 import { v4 as uuidv4 } from 'uuid'
-import { games, Game } from "../game"
+import { Game } from "../game"
+import { relate, broadcasted, findOne } from "../database"
 
 // middleware that is specific to this router
 const timeLog = (req, res, next) => {
@@ -11,16 +12,7 @@ const timeLog = (req, res, next) => {
 router.use(timeLog)
 
 router.get('/', (req, res) => {
-    let filteredGames = {}
-    // filter
-    for (const [key, value] of Object.entries(games)) {
-        let game = value as Game
-        if (game.broadcast) {
-            delete game.password
-            filteredGames[key] = value
-        }
-    }
-  res.json(filteredGames)
+  res.json(broadcasted())
 })
 router.post('/new', (req, res) => {
     let id = uuidv4()
@@ -34,14 +26,16 @@ router.post('/new', (req, res) => {
     let material = req.body.material
 
     let newGame = new Game(id, title, password, broadcast, player1, player2, material, 8, 8)
-    games[id] = newGame
+    relate(id, newGame)
     res.json(newGame)
 })
 // Order matters! At least until there's a UUIDv4 regex on the path. Otherwise /new is interpreted as a game id.
 router.get('/:id', (req, res) => {
     let id = req.params.id;
-    if (id in games) {
-        res.json(games[id])
+    
+    let game = findOne(id)
+    if (game !== null) {
+        res.json(game)
     } else {
         res.status(404).send("Game not found!")
     }

@@ -1,12 +1,13 @@
-const { games, isMoveValid, applyMove } = require("../game")
+import { CheckerMove } from "../game"
+import { findOne } from "../database"
 
 export default function handler (socketServer, socket) {
-    const moveChecker = (payload) => {
+    const moveChecker = (payload: { id: string; move: CheckerMove }) => {
         let { id, move } = payload
-        let game = games[id]
-        if (isMoveValid(game, move)) {
+        let game = findOne(id)
+        if (game.isMoveValid(move)) {
+            game.applyMove(move)
             game.moves.push(move)
-            applyMove(game, move)
             socketServer.emit("game", game)
         }
     }

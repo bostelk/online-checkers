@@ -1,5 +1,11 @@
+export type CheckerBoard = string[][]
+
+export interface CheckerMove {
+    [index: number]: number // oldX, oldY, newX, newY
+}
+
 export class Game {
-    id: string
+    readonly id: string
     title: string
     password: string
     broadcast: boolean
@@ -8,8 +14,8 @@ export class Game {
     material: string
     numRow: number
     numCol: number
-    checkers: string[][]
-    moves: []
+    checkers: CheckerBoard
+    moves: CheckerMove[]
     created_at: number
     updated_at: number
 
@@ -39,20 +45,15 @@ export class Game {
         this.created_at = now
         this.updated_at = now
     }
-}
-
-// In-memory persistence.
-export const games: Record<string, Game> = {}
-
-export function isMoveValid (game, move) {
-    return true // Validate user move to prevent cheating!!
-}
-
-export function applyMove(game, move) {
-    let value = game.checkers[move[1]][move[0]]
-    game.checkers[move[3]][move[2]] = value
-    game.checkers[move[1]][move[0]] = ''
-
-    let now = Date.now();
-    game.updated_at = now
+    isMoveValid (move: CheckerMove) {
+        return true // Validate user move to prevent cheating!!
+    }
+    applyMove(move: CheckerMove) {
+        let value = this.checkers[move[1]][move[0]]
+        this.checkers[move[3]][move[2]] = value
+        this.checkers[move[1]][move[0]] = ''
+    
+        let now = Date.now();
+        this.updated_at = now
+    }
 }
