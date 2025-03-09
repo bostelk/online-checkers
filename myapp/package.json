@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx ts-node src/app.ts",
-    "trans": "npx tsc -p . --outDir build",
+    "dist": "npx tsc -p . --outDir dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
