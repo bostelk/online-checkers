@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { socket } from "@/socket";
+import { socket } from '@/socket'
 
 const status = ref('Unknown')
 
@@ -68,20 +68,24 @@ const nextEllipsis = () => {
   }
 }
 
-watch(status, (oldStatus, newStatus) => {
-  clearInterval(intervalId)
-  if (status.value.endsWith('ing')) {
-    ellipsis.value = '.'
-    intervalId = setInterval(() => {
-      nextEllipsis()
-    }, 500)
-  } else { 
-    ellipsis.value = '' // Reset.
-  }
-}, { immediate: true })
+watch(
+  status,
+  (oldStatus, newStatus) => {
+    clearInterval(intervalId)
+    if (status.value.endsWith('ing')) {
+      ellipsis.value = '.'
+      intervalId = setInterval(() => {
+        nextEllipsis()
+      }, 500)
+    } else {
+      ellipsis.value = '' // Reset.
+    }
+  },
+  { immediate: true },
+)
 </script>
 <template>
-  <div id="net-io-status"><span :class="statusIconClass">🛜</span> {{ status }}{{ ellipsis }}</div>
+  <div id="net-io-status"><span :class="statusIconClass">📶</span> {{ status }}{{ ellipsis }}</div>
 </template>
 
 <style scoped>
