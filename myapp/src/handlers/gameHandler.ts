@@ -8,12 +8,23 @@ export default function handler(socketServer, socket) {
     if (game.validMove(move)) {
       game.applyMove(move)
       game.moves.push(move)
-      socketServer.emit('game', game)
+      socketServer.to(id).emit('game', game)
     } else {
       console.warn('move is invalid: ' + move)
-      socketServer.emit('game', game) // Correct client.
+      socketServer.to(id).emit('game', game) // Correct client.
     }
+  }
+  const joinGame = (payload: { id: string}) => {
+    socket.join(payload.id)
+    console.log("a player has joined game: " + payload.id)
+  }
+  const leaveGame = (payload: {id: string}) => {
+    socket.leave(payload.id)
+    console.log("a player has left game: " + payload.id)
   }
 
   socket.on('game:moveChecker', moveChecker)
+  socket.on('game:join', joinGame)
+  socket.on('game:leave', leaveGame)
+
 }

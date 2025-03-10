@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CheckerTable from '../components/CheckerTable.vue'
-import { useRoute } from 'vue-router'
-import { ref, reactive, watch, computed, onMounted, provide, props } from 'vue'
+import { useRoute, onBeforeRouteLeave} from 'vue-router'
+import { ref, reactive, watch, computed, onMounted, provide } from 'vue'
 import { socket } from "@/socket";
 
 const route = useRoute()
@@ -40,12 +40,22 @@ watch(
   },
 )
 
-onMounted(() => {
-  fetchGame(route.params.id)
+// Todo(kbostelmann): Upgrade to navigation guard.
+onMounted(async () => {
+  await fetchGame(route.params.id)
+  if (game.value) {
+    socket.emit('game:join', { id: game.value.id })
+  }
 })
 
 const gameTitle = computed(() => {
   return game.value ? game.value.title : 'Unknown'
+})
+
+onBeforeRouteLeave((to, from) => {
+  if (game.value) {
+    socket.emit('game:leave', { id: game.value.id })
+  }
 })
 </script>
 
