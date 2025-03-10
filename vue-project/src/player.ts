@@ -19,7 +19,7 @@ const generatePlayerName = () => {
     'Truthseeker',
     'Mann',
     'Doe',
-    'Fristlight',
+    'Firstlight',
     'Seagrass',
     'Dreamwalker',
     'Furry',
