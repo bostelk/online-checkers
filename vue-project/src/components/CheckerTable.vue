@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { playerName } from '@/player'
 import { reactive, watch, inject } from 'vue'
 
-let playerColor = 'b' // Black goes first.
+let playerColor = ''
 
 const emit = defineEmits({
   move(oldX: number, oldY: number, newX: number, newY: number) {
@@ -16,6 +17,21 @@ const serverGame = inject('server-game')
 watch(serverGame, async (newGame, oldGame) => {
   data.material = newGame.value.material
   data.checkers = newGame.value.checkers
+  data.turnCount = newGame.value.moves.length
+
+  console.log(newGame.value.player1)
+  console.log(newGame.value.player2)
+  console.log(playerName.value)
+
+  // Assign player color.
+  if (newGame.value.player1 === playerName.value) {
+    playerColor = 'b'
+  } else if (newGame.value.player2 === playerName.value) {
+    playerColor = 'r'
+  } else {
+    // The user is not playing.
+    playerColor = ''
+  }
 })
 
 const data = reactive({
@@ -32,6 +48,7 @@ const data = reactive({
     ['', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', ''],
   ],
+  turnCount: 0
 })
 let g_drag = [-1, -1] // bad global
 const cellId = (x: number, y: number) => {
@@ -113,6 +130,13 @@ const onDropCheckerPiece = (x: number, y: number, event: Event) => {
   moveChecker(g_drag[0], g_drag[1], x, y)
 }
 const isCheckerDraggable = (x: number, y: number) => {
+  return isMyTurn() && isMyChecker(x, y)
+}
+const isMyTurn = () => {
+  const turnColor = data.turnCount % 2 === 0 ? 'b' : 'r';
+  return turnColor === playerColor
+}
+const isMyChecker = (x: number, y:number) => {
   const colorMap = {
     b: 'b',
     c: 'c',
@@ -124,7 +148,7 @@ const isCheckerDraggable = (x: number, y: number) => {
     const myColor = colorMap[value]
     return myColor === playerColor
   }
-    return false
+  return false
 }
 const isMoveValid = (x: number, y: number) => {
   return getBoard(x, y) && getChecker(x, y) === ''
@@ -138,13 +162,6 @@ const moveChecker = (oldX: number, oldY: number, newX: number, newY: number) => 
     setChecker(oldX, oldY, '') // Empty.
     setChecker(newX, newY, value)
     emit('move', oldX, oldY, newX, newY)
-
-    // Temp(kbostelmann): Switch player color.
-    if (playerColor === 'b') {
-      playerColor = 'r'
-    } else if (playerColor === 'r') {
-      playerColor = 'b'
-    }
   }
 }
 </script>

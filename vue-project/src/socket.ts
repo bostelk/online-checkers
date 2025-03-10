@@ -1,2 +1,3 @@
 import { io } from "socket.io-client"
-export const socket = io("localhost:3000")
+import { playerName } from "./player"
+export const socket = io("localhost:3000", { auth: { token: playerName.value }})

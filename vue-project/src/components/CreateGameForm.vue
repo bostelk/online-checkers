@@ -1,42 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const generatePlayerName = () => {
-  const firstName = [
-    'Scrap',
-    'John',
-    'Adam',
-    'Stacy',
-    'Reb',
-    'Derek',
-    'Locas',
-    'Robin',
-    'Summer',
-    'Sarah',
-  ]
-  const lastName = [
-    'von Licht',
-    'Truthseeker',
-    'Mann',
-    'Doe',
-    'Fristlight',
-    'Seagrass',
-    'Dreamwalker',
-    'Furry',
-  ]
-  return (
-    firstName[Math.floor(Math.random() * firstName.length)] +
-    ' ' +
-    lastName[Math.floor(Math.random() * lastName.length)]
-  )
-}
-
 const title = defineModel('title')
 const password = ref('')
 const broadcast = ref(true)
 const material = ref('marble')
 const player1 = defineModel('playerName')
-const player2 = ref(generatePlayerName())
+const player2 = ref('')
 
 const emit = defineEmits({
   // Validate submit event
@@ -71,7 +41,7 @@ function submitForm() {
     <input type="text" id="player1" name="player1" v-model="player1" required /><br />
 
     <label for="player2">Player 2 Name:</label>&nbsp;
-    <input type="text" id="player2" name="player2" :value="player2" required /><br /><br />
+    <input type="text" id="player2" name="player2" :value="player2" /><br /><br />
 
     <button type="submit">Submit</button>
   </form>

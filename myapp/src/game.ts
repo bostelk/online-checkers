@@ -55,6 +55,12 @@ export class Game {
     this.created_at = now
     this.updated_at = now
   }
+  getTurnCount(): number {
+    return this.moves.length
+  }
+  getTurnColor(): string {
+    return this.getTurnCount() % 2 === 0 ? 'b' : 'r'
+  }
   isKing(x: number, y: number): boolean {
     let value = this.checkers[y][x]
     return value === 'c' || value === 's'

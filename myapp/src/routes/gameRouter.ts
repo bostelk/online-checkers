@@ -22,7 +22,7 @@ router.post('/new', (req, res) => {
   let password = req.body.password
   let broadcast = req.body.broadcast
   let player1 = req.body.player1
-  let player2 = req.body.player2
+  let player2 = '' // Note(kbostlemann): Ignored for now req.body.player2
   let material = req.body.material
 
   let newGame = new Game(id, title, password, broadcast, player1, player2, material, 8, 8)

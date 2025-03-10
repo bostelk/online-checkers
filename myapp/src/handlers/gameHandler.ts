@@ -17,6 +17,14 @@ export default function handler(socketServer, socket) {
   const joinGame = (payload: { id: string}) => {
     socket.join(payload.id)
     console.log("a player has joined game: " + payload.id)
+    let game = findOne(payload.id)
+    if (game) {
+      if (game.player1 === socket.data.username) {
+        // Do nothing: You cannot play yourself.
+      } else if (game.player2 === '') {
+        game.player2 = socket.data.username
+      }
+    }
   }
   const leaveGame = (payload: {id: string}) => {
     socket.leave(payload.id)

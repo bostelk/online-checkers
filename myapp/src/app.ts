@@ -30,7 +30,9 @@ interface ClientToServerEvents {
 
 interface InterServerEvents {}
 
-interface SocketData {}
+interface SocketData {
+  username: string
+}
 
 const socketServer = new Server<
   ClientToServerEvents,
@@ -62,8 +64,8 @@ app.get('/', (req, res) => {
 socketServer.on('connection', (socket) => {
   const req = socket.request as Request
   const sessionId = req.session.id
-  console.log('a user connected s:' + sessionId)
-
+  socket.data.username = socket.handshake.auth.token
+  console.log('a user connected sessionId:' + sessionId + ' username: ' + socket.data.username)
   registerGameHandlers(socketServer, socket)
 })
 
