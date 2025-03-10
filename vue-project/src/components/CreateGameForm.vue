@@ -35,7 +35,7 @@ const title = defineModel('title')
 const password = ref('')
 const broadcast = ref(true)
 const material = ref('marble')
-const player1 = ref(generatePlayerName())
+const player1 = defineModel('playerName')
 const player2 = ref(generatePlayerName())
 
 const emit = defineEmits({
@@ -68,7 +68,7 @@ function submitForm() {
     ><br /><br />
 
     <label for="player1">Player 1 Name:</label>&nbsp;
-    <input type="text" id="player1" name="player1" :value="player1" required /><br />
+    <input type="text" id="player1" name="player1" v-model="player1" required /><br />
 
     <label for="player2">Player 2 Name:</label>&nbsp;
     <input type="text" id="player2" name="player2" :value="player2" required /><br /><br />

@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import ConnectionIndicator from './components/ConnectionIndicator.vue'
+import PlayerInfo from './components/PlayerInfo.vue'
 
 document.title = 'Checkers'
 </script>
 
 <template>
   <header>
-    <ConnectionIndicator/>
+    <ConnectionIndicator />
 
     <div class="wrapper">
+      <PlayerInfo />
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
@@ -20,7 +22,7 @@ document.title = 'Checkers'
   </header>
 
   <main>
-    <RouterView/>
+    <RouterView />
   </main>
 </template>
 

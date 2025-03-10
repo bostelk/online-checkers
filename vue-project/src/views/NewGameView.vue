@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import CreateGameForm from '@/components/CreateGameForm.vue'
+import { playerName } from '@/player'
 
 const gameTitle = ref('New Game')
 const loading = ref(false)
@@ -45,7 +46,11 @@ const gamePath = () => {
     <h1>{{ gameTitle }}</h1>
     <p>Play a new game of Checkers</p>
     <br />
-    <CreateGameForm v-model:title="gameTitle" @submit="postNewGame" />
+    <CreateGameForm
+      v-model:title="gameTitle"
+      v-model:player-name="playerName"
+      @submit="postNewGame"
+    />
   </div>
   <div v-show="!noGame">
     <p>Game created successfully! <RouterLink :to="gamePath()">Play game</RouterLink></p>
