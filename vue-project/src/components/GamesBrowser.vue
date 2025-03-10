@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 const games = ref({})
 const loading = ref(false)
 
@@ -33,10 +33,16 @@ onBeforeUnmount(() => {
     clearInterval(intervalId)
   }
 })
+
+const numGames = computed(() => Object.keys(games.value).length)
 </script>
 
 <template>
   <div>
+    <p v-if="numGames == 0">
+      There are no games to play! Please create a
+      <RouterLink to="/games/new">new game</RouterLink> first.
+    </p>
     <ul>
       <li v-for="(game, id) in games">
         <RouterLink :to="gamePath(id)">{{ game.title }}</RouterLink>
