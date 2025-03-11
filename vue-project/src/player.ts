@@ -42,3 +42,6 @@ export const playerIconColor = ref(generatePlayerIconColor())
 export const playerIconSmall = computed(
   () => `/src/assets/meeple/meeple-${playerIconColor.value}-32.png`, // Baked interpolation: @ => src
 )
+export const playerIconTiny = computed(
+  () => `/src/assets/meeple/meeple-${playerIconColor.value}-16.png`, // Baked interpolation: @ => src
+)

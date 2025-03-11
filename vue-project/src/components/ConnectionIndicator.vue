@@ -85,14 +85,12 @@ watch(
 )
 </script>
 <template>
-  <div id="net-io-status"><span :class="statusIconClass">📶</span> {{ status }}{{ ellipsis }}</div>
+  <span id="connection-status"><span :class="statusIconClass">📶</span>{{ status }}{{ ellipsis }}</span>
 </template>
 
 <style scoped>
-#net-io-status {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+#connection-status {
+ margin-left: 50px;
 }
 .problem {
   opacity: 50%;

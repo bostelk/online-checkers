@@ -205,7 +205,12 @@ const moveChecker = (oldX: number, oldY: number, newX: number, newY: number) => 
 }
 #checker-table {
   z-index: 0;
-  position: fixed;
+  /*
+   * Disable the second fixed position because it breaks the page layout.
+   * While both elements are displayed ontop of each other they're not in the middle of the page.
+   * This fixes that at the cost of breaking when scrolling.
+   * position: fixed;
+  */
 }
 #marble-white {
   width: 32px;
