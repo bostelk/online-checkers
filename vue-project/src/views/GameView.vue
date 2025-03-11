@@ -7,6 +7,7 @@ import { socket } from "@/socket";
 const route = useRoute()
 const game = reactive({})
 const loading = ref(false)
+const err = ref({})
 
 provide('server-game', game)
 
@@ -14,8 +15,12 @@ const fetchGame = async (id) => {
   loading.value = true
   try {
     const res = await fetch('http://localhost:3000/games/' + id)
-    const newGame = await res.json()
-    game.value = newGame
+    const data = await res.json()
+    if (!('err' in data)) {
+      game.value = data
+    } else {
+      err.value = data
+    }
   } catch (error) {
     console.error('Error! Could not reach the API. ' + error)
   } finally {
@@ -90,7 +95,9 @@ const infoIcon = computed(() => {
 })
 
 const infoIcon2 = computed(() => {
-  if (gameInProgress.value) {
+  if (err.value.code === 404) {
+    return "⚠️"
+  } else if (gameInProgress.value) {
   return null
   } else {
     return "⏳"
@@ -98,9 +105,11 @@ const infoIcon2 = computed(() => {
 })
 
 const infoMessage = computed(() => {
-  if (gameInProgress.value) {
+  if (err.value.code === 404) {
+    return err.value.err
+  } else if (gameInProgress.value) {
     return currentPlayer.value + ", it's your turn."
-  } else {
+  }  else {
     return "Waiting for an opponent to join."
   }
 })
@@ -109,6 +118,10 @@ onBeforeRouteLeave((to, from) => {
   if (game.value) {
     socket.emit('game:leave', { id: game.value.id })
   }
+})
+
+watch(err, () => {
+  console.error(`${err.value.err} (${err.value.code})`)
 })
 </script>
 

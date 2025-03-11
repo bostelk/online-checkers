@@ -37,6 +37,6 @@ router.get('/:id', (req, res) => {
   if (game !== null) {
     res.json(game)
   } else {
-    res.status(404).send('Game not found!')
+    res.status(404).json({ code: 404, err: 'Game not found!' })
   }
 })
