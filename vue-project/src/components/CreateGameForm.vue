@@ -37,12 +37,6 @@ function submitForm() {
       <option value="marble">Marble</option></select
     ><br /><br />
 
-    <label for="player1">Player 1 Name:</label>&nbsp;
-    <input type="text" id="player1" name="player1" v-model="player1" required /><br />
-
-    <label for="player2">Player 2 Name:</label>&nbsp;
-    <input type="text" id="player2" name="player2" :value="player2" /><br /><br />
-
     <button type="submit">Submit</button>
   </form>
 </template>
