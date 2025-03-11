@@ -32,6 +32,7 @@ interface InterServerEvents {}
 
 interface SocketData {
   username: string
+  color: string
 }
 
 const socketServer = new Server<
@@ -65,6 +66,7 @@ socketServer.on('connection', (socket) => {
   const req = socket.request as Request
   const sessionId = req.session.id
   socket.data.username = socket.handshake.auth.token
+  socket.data.color = socket.handshake.auth.color
   console.log('a user connected sessionId:' + sessionId + ' username: ' + socket.data.username)
   registerGameHandlers(socketServer, socket)
 })

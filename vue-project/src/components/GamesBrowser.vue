@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { playerIconColor, meepleIconTiny } from "@/player"
+
 const games = ref({})
 const loading = ref(false)
 
@@ -45,11 +47,13 @@ const numGames = computed(() => Object.keys(games.value).length)
     </p>
     <ul>
       <li v-for="(game, id) in games">
-        <RouterLink :to="gamePath(id)">{{ game.title }}</RouterLink>
-        <ul>
-          <li>{{ game.player1 }}</li>
-          <li>{{ game.player2 }}</li>
-        </ul>
+        {{ game.title}}
+        <div>
+          <div v-if="game.player1"><img :src="game.player1Color && meepleIconTiny(game.player1Color)">{{ game.player1 }}</div>
+          <div v-else><img :src="meepleIconTiny(playerIconColor)"><RouterLink :to="gamePath(id)">Play</RouterLink></div>
+          <div v-if="game.player2"><img :src="game.player2Color && meepleIconTiny(game.player2Color)">{{ game.player2 }}</div>
+          <div v-else><img :src="meepleIconTiny(playerIconColor)"><RouterLink :to="gamePath(id)">Play</RouterLink></div>
+        </div>
       </li>
     </ul>
   </div>

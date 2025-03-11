@@ -10,6 +10,8 @@ export class Game {
   password: string
   broadcast: boolean
   player1: string
+  player1Color: string
+  player2Color: string
   player2: string
   material: string
   numRow: number

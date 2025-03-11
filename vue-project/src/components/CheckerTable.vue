@@ -19,10 +19,6 @@ watch(serverGame, async (newGame, oldGame) => {
   data.checkers = newGame.value.checkers
   data.turnCount = newGame.value.moves.length
 
-  console.log(newGame.value.player1)
-  console.log(newGame.value.player2)
-  console.log(playerName.value)
-
   // Assign player color.
   if (newGame.value.player1 === playerName.value) {
     playerColor = 'b'

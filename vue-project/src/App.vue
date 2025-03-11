@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { watch } from 'vue'
 import PlayerInfo from './components/PlayerInfo.vue'
+import { playerName } from '@/player'
 
-document.title = 'Checkers'
+watch(playerName, (newName) => {
+  document.title =  `${newName} | Checkers`
+}, { immediate: true })
 </script>
 
 <template>
