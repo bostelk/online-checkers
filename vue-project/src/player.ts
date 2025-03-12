@@ -39,14 +39,3 @@ const generatePlayerIconColor = () => {
 
 export const playerName = ref(generatePlayerName())
 export const playerIconColor = ref(generatePlayerIconColor())
-export const playerIconSmall = computed(() => meepleIconSmall(playerIconColor.value))
-export const playerIconTiny = computed(() => meepleIconTiny(playerIconColor.value))
-export const meepleIcon = (color: string, size: number) => {
-  return `/src/assets/meeple/meeple-${color}-${size}.png`
-} // Baked interpolation: @ => src
-export const meepleIconTiny = (color: string) => {
-  return meepleIcon(color, 16)
-}
-export const meepleIconSmall = (color: string) => {
-  return meepleIcon(color, 32)
-}

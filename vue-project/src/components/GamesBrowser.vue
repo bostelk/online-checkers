@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import { watch, computed } from 'vue'
-import { playerIconColor, meepleIconTiny } from '@/player'
+import { playerIconColor } from '@/player'
 import { useFetch } from '@/useFetch'
 import { usePeriodic } from '@/usePeriodic'
+import MeepleIcon from '../components/MeepleIcon.vue'
 
 const { counter } = usePeriodic(5000)
-const { data, error } = useFetch(() => 'http://localhost:3000/games#' + counter.value)
+const { data, error } = useFetch(() => 'http://localhost:3000/games#' + counter.value, {
+  reset: false,
+})
 
 watch(error, () => {
   console.error('Error! Could not reach the API. ' + error)
 })
 
 const games = data
-const numGames = computed(() => games.value ? Object.keys(games.value).length : 0)
+const numGames = computed(() => (games.value ? Object.keys(games.value).length : 0))
 
 const gamePath = (id) => {
   return '/games/' + id
 }
-
 </script>
 
 <template>
@@ -31,18 +33,18 @@ const gamePath = (id) => {
         {{ game.title }}
         <div>
           <div v-if="game.player1">
-            <img :src="game.player1Color && meepleIconTiny(game.player1Color)" />{{ game.player1 }}
+            <MeepleIcon :color="game.player1Color" :size="16" />{{ game.player1 }}
           </div>
           <div v-else>
-            <img :src="meepleIconTiny(playerIconColor)" /><RouterLink :to="gamePath(id)"
+            <MeepleIcon :color="playerIconColor" :size="16" /><RouterLink :to="gamePath(id)"
               >Play</RouterLink
             >
           </div>
           <div v-if="game.player2">
-            <img :src="game.player2Color && meepleIconTiny(game.player2Color)" />{{ game.player2 }}
+            <MeepleIcon :color="game.player2Color" :size="16" />{{ game.player2 }}
           </div>
           <div v-else>
-            <img :src="meepleIconTiny(playerIconColor)" /><RouterLink :to="gamePath(id)"
+            <MeepleIcon :color="playerIconColor" :size="16" /><RouterLink :to="gamePath(id)"
               >Play</RouterLink
             >
           </div>

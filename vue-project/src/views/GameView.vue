@@ -3,6 +3,7 @@ import CheckerTable from '../components/CheckerTable.vue'
 import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { ref, reactive, watch, computed, onMounted, provide } from 'vue'
 import { socket } from '@/socket'
+import { checkerUrl } from '@/assetUrl'
 
 const route = useRoute()
 const game = reactive({})
@@ -106,7 +107,7 @@ const gameInProgress = computed(() => {
 
 const infoIcon = computed(() => {
   if (gameInProgress.value) {
-    return '/src/assets/checker-' + currentTurnColor.value + '-16.png'
+    return checkerUrl(currentTurnColor.value, 16)
   } else {
     return null
   }

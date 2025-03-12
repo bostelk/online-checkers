@@ -1,14 +1,16 @@
 // useFetch.js
 import { ref, watchEffect, toValue } from 'vue'
 
-export function useFetch(url) {
+export function useFetch(url, options = { reset: true }) {
   const data = ref(null)
   const error = ref(null)
 
   const fetchData = () => {
     // reset state before fetching..
-    data.value = null
-    error.value = null
+    if (options.reset) {
+      data.value = null
+      error.value = null
+    }
 
     fetch(toValue(url))
       .then((res) => res.json())

@@ -2,7 +2,8 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { watch } from 'vue'
 import PlayerInfo from './components/PlayerInfo.vue'
-import { playerName, playerIconColor, meepleIconTiny } from '@/player'
+import { playerName, playerIconColor } from '@/player'
+import { meepleUrl } from '@/assetUrl'
 
 watch(
   playerName,
@@ -15,7 +16,7 @@ watch(
   playerIconColor,
   (newColor) => {
     const link = document.querySelector("link[rel~='icon']")
-    link.href = meepleIconTiny(newColor)
+    link.href = meepleUrl(newColor, 16)
   },
   { immediate: true },
 )

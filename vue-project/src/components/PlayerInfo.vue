@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { playerName, playerIconSmall } from '@/player'
+import { playerName, playerIconColor } from '@/player'
 import ConnectionIndicator from '../components/ConnectionIndicator.vue'
+import MeepleIcon from '../components/MeepleIcon.vue'
 </script>
 <template>
   <div id="player-info">
-    <img class="player-icon" :src="playerIconSmall" />
+    <MeepleIcon class="player-icon" :color="playerIconColor" :size="32" />
     <span id="player-name">
       {{ playerName }}
     </span>
