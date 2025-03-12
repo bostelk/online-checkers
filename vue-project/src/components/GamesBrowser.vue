@@ -4,9 +4,10 @@ import { playerIconColor } from '@/player'
 import { useFetch } from '@/useFetch'
 import { usePeriodic } from '@/usePeriodic'
 import MeepleIcon from '../components/MeepleIcon.vue'
+import { checkersAPI } from '@/api'
 
 const { counter } = usePeriodic(5000)
-const { data, error } = useFetch(() => 'http://localhost:3000/games#' + counter.value, {
+const { data, error } = useFetch(() => checkersAPI.games().toString() + '#' + counter.value, {
   reset: false,
 })
 

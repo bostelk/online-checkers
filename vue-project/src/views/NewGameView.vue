@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import CreateGameForm from '@/components/CreateGameForm.vue'
 import { playerName } from '@/player'
+import { checkersAPI } from '@/api'
 
 const gameTitle = ref('New Game')
 const loading = ref(false)
@@ -18,7 +19,7 @@ const postNewGame = async (form) => {
       player1: form.player1.value,
       player2: form.player2.value,
     }
-    const res = await fetch('http://localhost:3000/games/new', {
+    const res = await fetch(checkersAPI.newGame().toString(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

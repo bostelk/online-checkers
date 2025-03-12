@@ -1,5 +1,7 @@
 import { io } from 'socket.io-client'
 import { playerIconColor, playerName } from './player'
-export const socket = io('localhost:3000', {
+import { checkersAPI } from './api'
+
+export const socket = io(checkersAPI.baseUrl.toString(), {
   auth: { token: playerName.value, color: playerIconColor.value },
 })

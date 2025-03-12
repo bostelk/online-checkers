@@ -4,6 +4,7 @@ import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { ref, reactive, watch, computed, onMounted, provide } from 'vue'
 import { socket } from '@/socket'
 import { checkerUrl } from '@/assetUrl'
+import { checkersAPI } from '@/api'
 
 const route = useRoute()
 const game = reactive({})
@@ -15,7 +16,7 @@ provide('server-game', game)
 const fetchGame = async (id) => {
   loading.value = true
   try {
-    const res = await fetch('http://localhost:3000/games/' + id)
+    const res = await fetch(checkersAPI.game(id).toString())
     const data = await res.json()
     if (!('err' in data)) {
       game.value = data
