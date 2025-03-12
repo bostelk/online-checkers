@@ -135,9 +135,9 @@ const isMyTurn = () => {
 const isMyChecker = (x: number, y:number) => {
   const colorMap = {
     b: 'b',
-    c: 'c',
+    c: 'b',
     r: 'r',
-    s: 's'
+    s: 'r'
   }
   const value = getChecker(x, y)
   if (value !== null && value in colorMap) {

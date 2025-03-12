@@ -83,7 +83,7 @@ const currentTurnColor = computed(() => {
 })
 
 const gameInProgress = computed(() => {
-  return game.value && game.value.player1 && game.value.player2
+  return game.value && game.value.player1 && game.value.player2 && !game.value.winner
 })
 
 const infoIcon = computed(() => {
@@ -99,6 +99,8 @@ const infoIcon2 = computed(() => {
     return "⚠️"
   } else if (gameInProgress.value) {
   return null
+  } else if (game.value && game.value.winner) {
+    return "🥳"
   } else {
     return "⏳"
   } 
@@ -107,6 +109,8 @@ const infoIcon2 = computed(() => {
 const infoMessage = computed(() => {
   if (err.value.code === 404) {
     return err.value.err
+  } else if (game.value && game.value.winner) {
+    return `Congrats ${game.value.winner}! You win.`
   } else if (gameInProgress.value) {
     return currentPlayer.value + ", it's your turn."
   }  else {

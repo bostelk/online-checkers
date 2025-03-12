@@ -13,6 +13,8 @@ export class Game {
   player1Color: string
   player2Color: string
   player2: string
+  winner: string
+  loser: string
   material: string
   numRow: number
   numCol: number
@@ -52,7 +54,9 @@ export class Game {
       ['', 'b', '', 'b', '', 'b', '', 'b', ''],
     ]
     this.moves = []
-
+    this.winner = ''
+    this.loser = ''
+    
     let now = Date.now()
     this.created_at = now
     this.updated_at = now
@@ -74,6 +78,9 @@ export class Game {
       return 'c'
     }
     throw new Error('invalid color: ' + color)
+  }
+  isEmpty(x: number, y:number): boolean {
+    return this.checkers[y][x] === ''
   }
   getColor(x: number, y: number): string {
     let value = this.checkers[y][x]
@@ -241,7 +248,10 @@ export class Game {
       let { visited, path } = this.findPath(move[0], move[1], move[2], move[3])
       for (let i = 0; i < path.length; i++) {
         let current = path[i]
-        if (this.checkers[current[1]][current[0]] === opponentColor) {
+        if (this.isEmpty(current[0], current[1])) {
+          continue // Skip empty space
+        }
+        if (this.getColor(current[0], current[1]) === opponentColor) {
           this.checkers[current[1]][current[0]] = ''
         }
       }
@@ -267,5 +277,31 @@ export class Game {
 
     let now = Date.now()
     this.updated_at = now
+  }
+  checkWin(): string | null {
+    let counter = {
+      r: 0,
+      b: 0
+    }
+    for(let y = 0; y < this.numRow; y++) {
+      for(let x = 0; x < this.numCol; x++) {
+        if (this.isEmpty(x, y)) {
+          continue // Skip empty space.
+        }
+        let c = this.getColor(x, y)
+        if (c in counter) {
+          counter[c]++
+        }
+      }
+    }
+    if (counter['r'] === 0) {
+      return 'r'
+    } else if (counter['b'] === 0) {
+      return 'b'
+    }
+    return null
+  }
+  inProgress(): boolean {
+    return this.player1 && this.player2 && !this.winner
   }
 }
