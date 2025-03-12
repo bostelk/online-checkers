@@ -1,42 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { watch, computed } from 'vue'
 import { playerIconColor, meepleIconTiny } from '@/player'
+import { useFetch } from '@/useFetch'
+import { usePeriodic } from '@/usePeriodic'
 
-const games = ref({})
-const loading = ref(false)
+const { counter } = usePeriodic(5000)
+const { data, error } = useFetch(() => 'http://localhost:3000/games#' + counter.value)
 
-const fetchGames = async () => {
-  loading.value = true
-  try {
-    const res = await fetch('http://localhost:3000/games')
-    const newGames = await res.json()
-    games.value = newGames
-  } catch (error) {
-    console.error('Error! Could not reach the API. ' + error)
-  } finally {
-    loading.value = false
-  }
-}
+watch(error, () => {
+  console.error('Error! Could not reach the API. ' + error)
+})
+
+const games = data
+const numGames = computed(() => games.value ? Object.keys(games.value).length : 0)
+
 const gamePath = (id) => {
   return '/games/' + id
 }
 
-let intervalId = null
-
-onMounted(() => {
-  fetchGames()
-  // Set the interval to refresh data every 5 seconds (5000 ms)
-  intervalId = setInterval(fetchGames, 5000)
-})
-
-onBeforeUnmount(() => {
-  // Clear the interval when the component is destroyed
-  if (intervalId) {
-    clearInterval(intervalId)
-  }
-})
-
-const numGames = computed(() => Object.keys(games.value).length)
 </script>
 
 <template>
