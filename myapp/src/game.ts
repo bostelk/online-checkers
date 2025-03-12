@@ -56,7 +56,7 @@ export class Game {
     this.moves = []
     this.winner = ''
     this.loser = ''
-    
+
     let now = Date.now()
     this.created_at = now
     this.updated_at = now
@@ -79,7 +79,7 @@ export class Game {
     }
     throw new Error('invalid color: ' + color)
   }
-  isEmpty(x: number, y:number): boolean {
+  isEmpty(x: number, y: number): boolean {
     return this.checkers[y][x] === ''
   }
   getColor(x: number, y: number): string {
@@ -281,10 +281,10 @@ export class Game {
   checkWin(): string | null {
     let counter = {
       r: 0,
-      b: 0
+      b: 0,
     }
-    for(let y = 0; y < this.numRow; y++) {
-      for(let x = 0; x < this.numCol; x++) {
+    for (let y = 0; y < this.numRow; y++) {
+      for (let x = 0; x < this.numCol; x++) {
         if (this.isEmpty(x, y)) {
           continue // Skip empty space.
         }

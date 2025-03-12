@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import CheckerTable from '../components/CheckerTable.vue'
-import { useRoute, onBeforeRouteLeave} from 'vue-router'
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { ref, reactive, watch, computed, onMounted, provide } from 'vue'
-import { socket } from "@/socket";
+import { socket } from '@/socket'
 
 const route = useRoute()
 const game = reactive({})
@@ -30,21 +30,21 @@ const fetchGame = async (id) => {
 
 const postGameMove = async (oldX, oldY, newX, newY) => {
   const payload = { id: game.value.id, move: [oldX, oldY, newX, newY] }
-  socket.emit("game:moveChecker", payload)
+  socket.emit('game:moveChecker', payload)
 }
 
-socket.on("game", (newGame) => {
+socket.on('game', (newGame) => {
   game.value = newGame
 })
 
-socket.on("game:join", (payload: { name: string, color: string }) => {
+socket.on('game:join', (payload: { name: string; color: string }) => {
   if (game.value.player1 === '') {
     game.value.player1 = payload.name
   } else if (game.value.player2 === '') {
     game.value.player2 = payload.name
   }
 })
-socket.on("game:leave", (payload: { name: string, color: string }) => {
+socket.on('game:leave', (payload: { name: string; color: string }) => {
   if (game.value.player1 === payload.name) {
     game.value.player1 = ''
   } else if (game.value.player2 === payload.name) {
@@ -72,18 +72,28 @@ const gameTitle = computed(() => {
 
 const gameSubtitle = computed(() => {
   if (gameFinished.value) {
-    return (game.value && game.value.winner ? game.value.winner : "???") + " vs. " + (game.value && game.value.loser ? game.value.loser : "???")
+    return (
+      (game.value && game.value.winner ? game.value.winner : '???') +
+      ' vs. ' +
+      (game.value && game.value.loser ? game.value.loser : '???')
+    )
   } else {
-    return (game.value && game.value.player1 ? game.value.player1 : "???") + " vs. " + (game.value && game.value.player2 ? game.value.player2 : "???")
+    return (
+      (game.value && game.value.player1 ? game.value.player1 : '???') +
+      ' vs. ' +
+      (game.value && game.value.player2 ? game.value.player2 : '???')
+    )
   }
 })
 
 const currentPlayer = computed(() => {
-  return (game.value.moves && game.value.moves.length % 2 === 0) ? game.value.player1 : game.value.player2
+  return game.value.moves && game.value.moves.length % 2 === 0
+    ? game.value.player1
+    : game.value.player2
 })
 
 const currentTurnColor = computed(() => {
-  return (game.value.moves && game.value.moves.length % 2 === 0) ? "black" : "red"
+  return game.value.moves && game.value.moves.length % 2 === 0 ? 'black' : 'red'
 })
 
 const gameFinished = computed(() => {
@@ -96,7 +106,7 @@ const gameInProgress = computed(() => {
 
 const infoIcon = computed(() => {
   if (gameInProgress.value) {
-  return "/src/assets/checker-" + currentTurnColor.value + "-16.png"
+    return '/src/assets/checker-' + currentTurnColor.value + '-16.png'
   } else {
     return null
   }
@@ -104,14 +114,14 @@ const infoIcon = computed(() => {
 
 const infoIcon2 = computed(() => {
   if (err.value.code === 404) {
-    return "⚠️"
+    return '⚠️'
   } else if (gameInProgress.value) {
-  return null
+    return null
   } else if (game.value && game.value.winner) {
-    return "🥳"
+    return '🥳'
   } else {
-    return "⏳"
-  } 
+    return '⏳'
+  }
 })
 
 const infoMessage = computed(() => {
@@ -121,8 +131,8 @@ const infoMessage = computed(() => {
     return `Congrats ${game.value.winner}! You win.`
   } else if (gameInProgress.value) {
     return currentPlayer.value + ", it's your turn."
-  }  else {
-    return "Waiting for an opponent to join."
+  } else {
+    return 'Waiting for an opponent to join.'
   }
 })
 
@@ -141,7 +151,7 @@ watch(err, () => {
   <div class="game">
     <div id="game-header">
       <h1>{{ gameTitle }}</h1>
-      <hr>
+      <hr />
       <p>{{ gameSubtitle }}</p>
     </div>
     <div>
@@ -151,7 +161,9 @@ watch(err, () => {
           <img :src="infoIcon" />
           {{ infoIcon2 }}
         </div>
-        <div><p>{{ infoMessage }}</p></div>
+        <div>
+          <p>{{ infoMessage }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -159,35 +171,35 @@ watch(err, () => {
 
 <style>
 #game-header {
-  padding-bottom:10px;
+  padding-bottom: 10px;
 }
 #game-header hr {
-  width:260px;
+  width: 260px;
 }
 #game-info {
   padding-top: 10px;
-  display:flex;
+  display: flex;
   align-items: center;
 }
 #game-info-icon {
   display: flex;
   align-content: center;
-  padding-right:5px;
+  padding-right: 5px;
 }
 .test {
   padding-top: 10px;
-  display:flex;
+  display: flex;
   align-items: center;
 }
 .test-2 {
   display: flex;
   align-content: center;
-  padding-left:2px;
+  padding-left: 2px;
 }
 .test-3 {
   display: flex;
   align-content: center;
-  padding-left:2px;
+  padding-left: 2px;
 }
 @media (min-width: 1024px) {
   .game {

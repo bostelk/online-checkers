@@ -44,7 +44,7 @@ const data = reactive({
     ['', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', ''],
   ],
-  turnCount: 0
+  turnCount: 0,
 })
 let g_drag = [-1, -1] // bad global
 const cellId = (x: number, y: number) => {
@@ -79,7 +79,7 @@ const checkerId = (x: number, y: number) => {
     r: 'red-checker',
     s: 'red-checker-king',
     b: 'black-checker',
-    c: 'black-checker-king'
+    c: 'black-checker-king',
   }
   if (value in valueToId) {
     return valueToId[value]
@@ -129,15 +129,15 @@ const isCheckerDraggable = (x: number, y: number) => {
   return isMyTurn() && isMyChecker(x, y)
 }
 const isMyTurn = () => {
-  const turnColor = data.turnCount % 2 === 0 ? 'b' : 'r';
+  const turnColor = data.turnCount % 2 === 0 ? 'b' : 'r'
   return turnColor === playerColor
 }
-const isMyChecker = (x: number, y:number) => {
+const isMyChecker = (x: number, y: number) => {
   const colorMap = {
     b: 'b',
     c: 'b',
     r: 'r',
-    s: 'r'
+    s: 'r',
   }
   const value = getChecker(x, y)
   if (value !== null && value in colorMap) {

@@ -5,15 +5,14 @@ export default function handler(socketServer, socket) {
   const moveChecker = (payload: { id: string; move: CheckerMove }) => {
     let { id, move } = payload
     let game = findOne(id)
-    if (game.inProgress() &&
-        game.validMove(move)) {
+    if (game.inProgress() && game.validMove(move)) {
       game.applyMove(move)
       game.moves.push(move)
       let win = game.checkWin()
       if (win) {
         const colorToPlayer = {
           b: game.player1,
-          r: game.player2
+          r: game.player2,
         }
         game.winner = colorToPlayer[win]
         game.loser = colorToPlayer[game.getOppositeColor(win)]

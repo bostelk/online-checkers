@@ -85,12 +85,14 @@ watch(
 )
 </script>
 <template>
-  <span id="connection-status"><span :class="statusIconClass">📶</span>{{ status }}{{ ellipsis }}</span>
+  <span id="connection-status"
+    ><span :class="statusIconClass">📶</span>{{ status }}{{ ellipsis }}</span
+  >
 </template>
 
 <style scoped>
 #connection-status {
- margin-left: 50px;
+  margin-left: 50px;
 }
 .problem {
   opacity: 50%;

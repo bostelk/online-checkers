@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { playerName, playerIconSmall } from '@/player'
 import ConnectionIndicator from '../components/ConnectionIndicator.vue'
-
 </script>
 <template>
   <div id="player-info">

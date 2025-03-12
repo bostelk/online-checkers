@@ -4,21 +4,29 @@ import { watch } from 'vue'
 import PlayerInfo from './components/PlayerInfo.vue'
 import { playerName, playerIconColor, meepleIconTiny } from '@/player'
 
-watch(playerName, (newName) => {
-  document.title =  `${newName} | Checkers`
-}, { immediate: true })
-watch(playerIconColor, (newColor) => {
-  const link = document.querySelector("link[rel~='icon']")
-  link.href = meepleIconTiny(newColor)
-}, { immediate: true })
+watch(
+  playerName,
+  (newName) => {
+    document.title = `${newName} | Checkers`
+  },
+  { immediate: true },
+)
+watch(
+  playerIconColor,
+  (newColor) => {
+    const link = document.querySelector("link[rel~='icon']")
+    link.href = meepleIconTiny(newColor)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <header>
     <div class="wrapper">
       <div>
-      <PlayerInfo />
-    </div>
+        <PlayerInfo />
+      </div>
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
