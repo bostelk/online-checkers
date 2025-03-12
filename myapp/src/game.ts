@@ -295,9 +295,9 @@ export class Game {
       }
     }
     if (counter['r'] === 0) {
-      return 'r'
-    } else if (counter['b'] === 0) {
       return 'b'
+    } else if (counter['b'] === 0) {
+      return 'r'
     }
     return null
   }

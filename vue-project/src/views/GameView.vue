@@ -71,7 +71,11 @@ const gameTitle = computed(() => {
 })
 
 const gameSubtitle = computed(() => {
-  return (game.value && game.value.player1 ? game.value.player1 : "???") + " vs. " + (game.value && game.value.player2 ? game.value.player2 : "???")
+  if (gameFinished.value) {
+    return (game.value && game.value.winner ? game.value.winner : "???") + " vs. " + (game.value && game.value.loser ? game.value.loser : "???")
+  } else {
+    return (game.value && game.value.player1 ? game.value.player1 : "???") + " vs. " + (game.value && game.value.player2 ? game.value.player2 : "???")
+  }
 })
 
 const currentPlayer = computed(() => {
@@ -80,6 +84,10 @@ const currentPlayer = computed(() => {
 
 const currentTurnColor = computed(() => {
   return (game.value.moves && game.value.moves.length % 2 === 0) ? "black" : "red"
+})
+
+const gameFinished = computed(() => {
+  return game.value && game.value.winner
 })
 
 const gameInProgress = computed(() => {
