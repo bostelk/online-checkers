@@ -34,7 +34,7 @@ const gamePath = (id) => {
         {{ game.title }}
         <div>
           <div v-if="game.player1">
-            <MeepleIcon :color="game.player1Color" :size="16" />{{ game.player1 }}
+            <MeepleIcon :color="game.player1Color || 'unknown'" :size="16" />{{ game.player1 }}
           </div>
           <div v-else>
             <MeepleIcon :color="playerIconColor" :size="16" /><RouterLink :to="gamePath(id)"
@@ -42,7 +42,7 @@ const gamePath = (id) => {
             >
           </div>
           <div v-if="game.player2">
-            <MeepleIcon :color="game.player2Color" :size="16" />{{ game.player2 }}
+            <MeepleIcon :color="game.player2Color || 'unknown'" :size="16" />{{ game.player2 }}
           </div>
           <div v-else>
             <MeepleIcon :color="playerIconColor" :size="16" /><RouterLink :to="gamePath(id)"

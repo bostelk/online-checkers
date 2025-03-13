@@ -16,6 +16,9 @@ import red_16 from '@/assets/meeple/meeple-red-16.png'
 import red_32 from '@/assets/meeple/meeple-red-32.png'
 import white_16 from '@/assets/meeple/meeple-white-16.png'
 import white_32 from '@/assets/meeple/meeple-white-32.png'
+import unknown_16 from '@/assets/meeple/meeple-transparent-16.png'
+import unknown_32 from '@/assets/meeple/meeple-transparent-32.png'
+
 
 export function meepleUrl(color: string, size: number): string {
   const table = {
@@ -51,6 +54,10 @@ export function meepleUrl(color: string, size: number): string {
       16: white_16,
       32: white_32,
     },
+    unknown: {
+      16: unknown_16,
+      32: unknown_32
+    }
   }
   return table[color][size]
 }
