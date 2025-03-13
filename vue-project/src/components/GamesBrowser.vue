@@ -54,3 +54,6 @@ const gamePath = (id) => {
     </ul>
   </div>
 </template>
+<style scoped>
+ul { overflow:hidden; overflow-y:scroll; max-height:300px }
+</style>
