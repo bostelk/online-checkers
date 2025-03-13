@@ -156,30 +156,28 @@ export class Game {
     let getNeighbours = (x: number, y: number): any[] => {
       let neighbours = []
       for (let i = 0; i < allowedDirs.length; i++) {
-        let jumpX = allowedDirs[i][0] + x
-        let jumpY = allowedDirs[i][1] + y
-        let neighbourX = allowedDirs[i][0] * 2 + x
-        let neighbourY = allowedDirs[i][1] * 2 + y
-        if (!this.boundsCheck(neighbourX, neighbourY)) {
+        let neighbourX = allowedDirs[i][0] + x
+        let neighbourY = allowedDirs[i][1] + y
+        let jumpX = allowedDirs[i][0] * 2 + x
+        let jumpY = allowedDirs[i][1] * 2 + y
+        if (!this.boundsCheck(jumpX, jumpY)) {
           continue // Move must be on game board.
         }
-        let value = this.checkers[neighbourY][neighbourX]
+        let value = this.checkers[jumpY][jumpX]
         if (value !== '') {
           continue // Move must jump to empty space.
         }
-        let value2 = this.checkers[jumpY][jumpX]
+        let value2 = this.checkers[neighbourY][neighbourX]
         if (value2 === '') {
-          continue // Jump must not be empty.
+          continue // Neighbour must not be empty.
         }
-        let jumpColor = this.getColor(jumpX, jumpY)
-        if (jumpColor !== opponentColor) {
+        let neighbourColor = this.getColor(neighbourX, neighbourY)
+        if (neighbourColor !== opponentColor) {
           continue // Move must jump opposite color.
         }
-        let key = this.moveKey(neighbourX, neighbourY)
+        let key = this.moveKey(jumpX, jumpY)
         if (!visited.has(key)) {
           visited.add(key)
-          path.push([jumpX, jumpY])
-          path.push([neighbourX, neighbourY])
           neighbours.push([neighbourX, neighbourY])
         }
       }
@@ -189,20 +187,21 @@ export class Game {
     let visited = new Set<string>()
     let current = [x, y]
     let stack: any[] = getNeighbours(current[0], current[1])
+    path.push(current)
     while (stack.length > 0) {
       if (steps >= maxSteps) {
         console.warn('jump validation exceeded allowed number of steps')
         break
       }
       current = stack.pop()
+      let middle = [Math.floor((current[0] + path[path.length - 1][0]) / 2), Math.floor((current[1] + path[path.length - 1][1]) / 2)]
+      path.push(middle)
+      path.push(current)
       if (current[0] == goalX && current[1] == goalY) {
         break
       }
       let neighbours = getNeighbours(current[0], current[1])
-      if (neighbours.length > 0) {
-        // Skip empty array.
-        stack.push(neighbours)
-      }
+      stack = stack.concat(neighbours)
       steps += 1
     }
 
