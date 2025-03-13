@@ -5,7 +5,7 @@ export default function handler(socketServer, socket) {
   const moveChecker = (payload: { id: string; move: CheckerMove }) => {
     let { id, move } = payload
     let game = findOne(id)
-    if (game.inProgress() && game.validMove(move)) {
+    if (game.inProgress() && game.isPlayerTurn(socket.data.username) && game.validMove(move)) {
       game.applyMove(move)
       game.moves.push(move)
       let win = game.checkWin()

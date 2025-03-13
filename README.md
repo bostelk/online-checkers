@@ -7,7 +7,6 @@ A simple online checkers demo. There are two code projects: [vue-project](/vue-p
 TODO
 ----
 
-* Fix no turn validation bug
 * Fix jump/path finding alg bug. Unit test.
 * Add tsParticles confetti https://confetti.js.org/ to win screen.
 * Add sqlite persistence

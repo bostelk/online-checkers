@@ -67,6 +67,15 @@ export class Game {
   getTurnColor(): string {
     return this.getTurnCount() % 2 === 0 ? 'b' : 'r'
   }
+  isPlayerTurn(name: string) {
+    let index = this.getTurnCount() % 2 + 1
+    if (index === 1 && name === this.player1) {
+      return true
+    } else if (index === 2 && name === this.player2) {
+      return true
+    }
+    return false
+  }
   isKing(x: number, y: number): boolean {
     let value = this.checkers[y][x]
     return value === 'c' || value === 's'
