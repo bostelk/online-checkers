@@ -1,3 +1,5 @@
+import { error } from "console"
+
 export type CheckerBoard = string[][] // 'r' red, 's', red king, 'b' black, 'c' black king, '' empty.
 
 export interface CheckerMove {
@@ -102,7 +104,7 @@ export class Game {
     if (value in colorMap) {
       return colorMap[value]
     }
-    throw new Error('unknown color')
+    throw new Error('unknown color \'' + value + '\'  ')
   }
   getOppositeColor(color: string) {
     if (color === 'r') {
@@ -142,109 +144,179 @@ export class Game {
   moveKey(x: number, y: number): string {
     return x + ',' + y
   }
-  findPath(
+  findPaths(
     x: number,
     y: number,
     goalX?: number,
     goalY?: number,
     maxSteps: number = 100,
-  ): { visited: Set<string>; path: any[] } {
+  ): any[] {
+    let paths = []
     let path = []
-
+    let findAll = !goalX && !goalY
     const opponentColor = this.getOppositeColor(this.getColor(x, y))
     const allowedDirs = this.getAllowedDirs(x, y)
-    let getNeighbours = (x: number, y: number): any[] => {
+    let getNeighbours = (x: number, y: number, mustJump: boolean = false): any[] => {
       let neighbours = []
+
       for (let i = 0; i < allowedDirs.length; i++) {
         let neighbourX = allowedDirs[i][0] + x
         let neighbourY = allowedDirs[i][1] + y
-        let jumpX = allowedDirs[i][0] * 2 + x
-        let jumpY = allowedDirs[i][1] * 2 + y
-        if (!this.boundsCheck(jumpX, jumpY)) {
+
+        if (!this.boundsCheck(neighbourX, neighbourY)) {
           continue // Move must be on game board.
         }
-        let value = this.checkers[jumpY][jumpX]
-        if (value !== '') {
-          continue // Move must jump to empty space.
+
+        if (this.isEmpty(neighbourX, neighbourY)) {
+          if (!mustJump) { // Jumps must be consecutive.
+            let key = this.moveKey(neighbourX, neighbourY)
+            if (!visited.has(key)) {
+              neighbours.push([neighbourX, neighbourY])
+            }
+            continue // Move to adjacent empty space.
+          }
         }
-        let value2 = this.checkers[neighbourY][neighbourX]
-        if (value2 === '') {
-          continue // Neighbour must not be empty.
-        }
+
         let neighbourColor = this.getColor(neighbourX, neighbourY)
         if (neighbourColor !== opponentColor) {
           continue // Move must jump opposite color.
         }
+
+        let jumpX = allowedDirs[i][0] * 2 + x
+        let jumpY = allowedDirs[i][1] * 2 + y
+
+        if (!this.boundsCheck(jumpX, jumpY)) {
+          continue // Move must be on game board.
+        }
+
+        if (!this.isEmpty(jumpX, jumpY)) {
+          continue // Move must jump to empty space.
+        }
+
         let key = this.moveKey(jumpX, jumpY)
         if (!visited.has(key)) {
-          visited.add(key)
-          neighbours.push([neighbourX, neighbourY])
+          neighbours.push([jumpX, jumpY])
         }
       }
+
       return neighbours
     }
     let steps = 0
     let visited = new Set<string>()
-    let current = [x, y]
+    const root = [x, y]
+    let current = root
     let stack: any[] = getNeighbours(current[0], current[1])
-    path.push(current)
+    path.push(root)
     while (stack.length > 0) {
       if (steps >= maxSteps) {
         console.warn('jump validation exceeded allowed number of steps')
         break
       }
       current = stack.pop()
-      let middle = [Math.floor((current[0] + path[path.length - 1][0]) / 2), Math.floor((current[1] + path[path.length - 1][1]) / 2)]
-      path.push(middle)
+      // Add neighbour to path when move is a jump.
+      let delta = [current[0] - path[path.length - 1][0], current[1] - path[path.length - 1][1]]
+      let jump = Math.abs(delta[0]) > 1 || Math.abs(delta[1]) > 1
+      if (jump) {
+        let middle = [Math.floor((current[0] + path[path.length - 1][0]) / 2), Math.floor((current[1] + path[path.length - 1][1]) / 2)]
+        path.push(middle)
+      }
       path.push(current)
       if (current[0] == goalX && current[1] == goalY) {
+         // Terminate path and search.
+        paths.push(path)
+        path = [root]
         break
       }
-      let neighbours = getNeighbours(current[0], current[1])
-      stack = stack.concat(neighbours)
+      let key = this.moveKey(current[0], current[1])
+      if (!visited.has(key)) {
+        visited.add(key)
+        // A consecutive jump is a valid move.
+        if (jump) {
+          let neighbours = getNeighbours(current[0], current[1], true)
+          if (neighbours.length === 0) {
+            // Terminate path.
+            if (findAll) {
+              paths.push(path)
+            }
+            path = [root]            
+          }
+          stack = stack.concat(neighbours)
+        } else {
+          // Terminate path.
+          if (findAll) {
+            paths.push(path)
+          }
+          path = [root]
+        }
+      }
       steps += 1
     }
 
-    let result = {
-      visited,
-      path,
+    // Terminate path.
+    if (path.length > 1 && findAll) {
+      paths.push(path)
     }
-    return result
+
+    return paths
+  }
+  findPath(
+    x: number,
+    y: number,
+    goalX?: number,
+    goalY?: number,
+    maxSteps: number = 100,
+  ): any[] {
+    let paths = this.findPaths(x, y, goalX, goalY, maxSteps)
+    if (paths.length === 1) {
+      return paths[0]
+    }
+    return null // No paths.
+  }
+  countCaptures(path: any[]):number {
+    if (path.length < 2) {
+      return 0
+    }
+    let myColor = this.getColor(path[0][0],path[0][1])
+    let opponentColor = this.getOppositeColor(myColor)
+    let count = 0
+    for (let i = 0; i < path.length; i++) {
+      let current = path[i]
+      if (this.isEmpty(current[0], current[1])) {
+        continue // Skip empty space
+      }
+      if (this.getColor(current[0], current[1]) === opponentColor) {
+        count += 1
+      }
+    }
+    return count
   }
   validMove(move: CheckerMove): boolean {
-    // Check move is within game board
-    if (!this.boundsCheck(move[2], move[3])) {
-      return false
+    let paths = this.findPaths(move[0], move[1])
+    if (paths.length === 0) {
+      return false // No available moves.
     }
-
-    // Check move is in the forward (towards opponent) diagonal direction
-    const allowedDirs = this.getAllowedDirs(move[0], move[1])
-    const delta = [move[2] - move[0], move[3] - move[1]]
-    const deltaNorm = [Math.sign(delta[0]), Math.sign(delta[1])]
-    let validDir = false
-    for (let i = 0; i < allowedDirs.length; i++) {
-      if (allowedDirs[i][0] === deltaNorm[0] && allowedDirs[i][1] === deltaNorm[1]) {
-        validDir = true
-        break
+    // Move must jump when available.
+    let jump = false
+    let jumped = false
+    for (let i = 0; i < paths.length; i++) {
+      let path = paths[i]
+      if (this.countCaptures(path) > 0) {
+        jump = true
+        jumped = jumped || move[2] === path[path.length - 1][0] && move[3] === path[path.length - 1][1]
       }
     }
-
-    let validMove = false
-    if (validDir) {
-      // Check move is to an empty space.
-      if (this.checkers[move[3]][move[2]] === '') {
-        validMove = true
+    // Move must jump when available.
+    if (jump) {
+      return jumped
+    }
+    // Move must have been found.
+    for (let i = 0; i < paths.length; i++) {
+      let path = paths[i]
+      if (move[2] === path[path.length - 1][0] && move[3] === path[path.length - 1][1]) {
+        return true
       }
-    }
-
-    // Check move is a jump when available.
-    let { visited, path } = this.findPath(move[0], move[1])
-    let moveKey = this.moveKey(move[2], move[3])
-    if (visited.size > 0 && !visited.has(moveKey)) {
-      validMove = false
-    }
-
-    return validMove
+    }    
+    return false // Move is invalid.
   }
   applyMove(move: CheckerMove) {
     let myColor = this.getColor(move[0], move[1])
@@ -253,7 +325,10 @@ export class Game {
 
     // Eat opponent.
     if (Math.abs(delta[0]) > 1 || Math.abs(delta[1]) > 1) {
-      let { visited, path } = this.findPath(move[0], move[1], move[2], move[3])
+      let path = this.findPath(move[0], move[1], move[2], move[3])
+      if (!path) {
+        throw new error("invalid move. validate move first before applying")
+      }
       for (let i = 0; i < path.length; i++) {
         let current = path[i]
         if (this.isEmpty(current[0], current[1])) {
