@@ -1,4 +1,4 @@
-import { error } from "console"
+import { error } from 'console'
 
 export type CheckerBoard = string[][] // 'r' red, 's', red king, 'b' black, 'c' black king, '' empty.
 
@@ -70,7 +70,7 @@ export class Game {
     return this.getTurnCount() % 2 === 0 ? 'b' : 'r'
   }
   isPlayerTurn(name: string) {
-    let index = this.getTurnCount() % 2 + 1
+    let index = (this.getTurnCount() % 2) + 1
     if (index === 1 && name === this.player1) {
       return true
     } else if (index === 2 && name === this.player2) {
@@ -104,7 +104,7 @@ export class Game {
     if (value in colorMap) {
       return colorMap[value]
     }
-    throw new Error('unknown color \'' + value + '\'  ')
+    throw new Error("unknown color '" + value + "'  ")
   }
   getOppositeColor(color: string) {
     if (color === 'r') {
@@ -144,13 +144,7 @@ export class Game {
   moveKey(x: number, y: number): string {
     return x + ',' + y
   }
-  findPaths(
-    x: number,
-    y: number,
-    goalX?: number,
-    goalY?: number,
-    maxSteps: number = 100,
-  ): any[] {
+  findPaths(x: number, y: number, goalX?: number, goalY?: number, maxSteps: number = 100): any[] {
     let paths = []
     let path = []
     let findAll = !goalX && !goalY
@@ -168,13 +162,14 @@ export class Game {
         }
 
         if (this.isEmpty(neighbourX, neighbourY)) {
-          if (!mustJump) { // Jumps must be consecutive.
+          if (!mustJump) {
+            // Jumps must be consecutive.
             let key = this.moveKey(neighbourX, neighbourY)
             if (!visited.has(key)) {
-              neighbours.push([neighbourX, neighbourY])
+              neighbours.push([neighbourX, neighbourY]) // Move to adjacent empty space.
             }
-            continue // Move to adjacent empty space.
           }
+          continue // Cannot move past empty space.
         }
 
         let neighbourColor = this.getColor(neighbourX, neighbourY)
@@ -217,12 +212,15 @@ export class Game {
       let delta = [current[0] - path[path.length - 1][0], current[1] - path[path.length - 1][1]]
       let jump = Math.abs(delta[0]) > 1 || Math.abs(delta[1]) > 1
       if (jump) {
-        let middle = [Math.floor((current[0] + path[path.length - 1][0]) / 2), Math.floor((current[1] + path[path.length - 1][1]) / 2)]
+        let middle = [
+          Math.floor((current[0] + path[path.length - 1][0]) / 2),
+          Math.floor((current[1] + path[path.length - 1][1]) / 2),
+        ]
         path.push(middle)
       }
       path.push(current)
       if (current[0] == goalX && current[1] == goalY) {
-         // Terminate path and search.
+        // Terminate path and search.
         paths.push(path)
         path = [root]
         break
@@ -238,7 +236,7 @@ export class Game {
             if (findAll) {
               paths.push(path)
             }
-            path = [root]            
+            path = [root]
           }
           stack = stack.concat(neighbours)
         } else {
@@ -259,24 +257,26 @@ export class Game {
 
     return paths
   }
-  findPath(
-    x: number,
-    y: number,
-    goalX?: number,
-    goalY?: number,
-    maxSteps: number = 100,
-  ): any[] {
+  findPath(x: number, y: number, goalX?: number, goalY?: number, maxSteps: number = 100): any[] {
     let paths = this.findPaths(x, y, goalX, goalY, maxSteps)
-    if (paths.length === 1) {
-      return paths[0]
+    for (let i = 0; i < paths.length; i++) {
+      let path = paths[i]
+      if (
+        x === path[0][0] &&
+        y === path[0][1] &&
+        goalX === path[path.length - 1][0] &&
+        goalY === path[path.length - 1][1]
+      ) {
+        return path
+      }
     }
     return null // No paths.
   }
-  countCaptures(path: any[]):number {
+  countCaptures(path: any[]): number {
     if (path.length < 2) {
       return 0
     }
-    let myColor = this.getColor(path[0][0],path[0][1])
+    let myColor = this.getColor(path[0][0], path[0][1])
     let opponentColor = this.getOppositeColor(myColor)
     let count = 0
     for (let i = 0; i < path.length; i++) {
@@ -291,7 +291,19 @@ export class Game {
     return count
   }
   validMove(move: CheckerMove): boolean {
-    let paths = this.findPaths(move[0], move[1])
+    if (this.isEmpty(move[0], move[1])) {
+      return false // Cannot move an empty square.
+    }
+    let myColor = this.getColor(move[0], move[1])
+    let paths = []
+    for (let y = 0; y < this.numRow; y++) {
+      for (let x = 0; x < this.numCol; x++) {
+        if (!this.isEmpty(x, y) && myColor === this.getColor(x, y)) {
+          let paths0 = this.findPaths(x, y)
+          paths = paths.concat(paths0)
+        }
+      }
+    }
     if (paths.length === 0) {
       return false // No available moves.
     }
@@ -302,7 +314,12 @@ export class Game {
       let path = paths[i]
       if (this.countCaptures(path) > 0) {
         jump = true
-        jumped = jumped || move[2] === path[path.length - 1][0] && move[3] === path[path.length - 1][1]
+        jumped =
+          jumped ||
+          (move[0] === path[0][0] &&
+            move[1] === path[0][1] &&
+            move[2] === path[path.length - 1][0] &&
+            move[3] === path[path.length - 1][1])
       }
     }
     // Move must jump when available.
@@ -312,10 +329,15 @@ export class Game {
     // Move must have been found.
     for (let i = 0; i < paths.length; i++) {
       let path = paths[i]
-      if (move[2] === path[path.length - 1][0] && move[3] === path[path.length - 1][1]) {
+      if (
+        move[0] === path[0][0] &&
+        move[1] === path[0][1] &&
+        move[2] === path[path.length - 1][0] &&
+        move[3] === path[path.length - 1][1]
+      ) {
         return true
       }
-    }    
+    }
     return false // Move is invalid.
   }
   applyMove(move: CheckerMove) {
@@ -327,7 +349,7 @@ export class Game {
     if (Math.abs(delta[0]) > 1 || Math.abs(delta[1]) > 1) {
       let path = this.findPath(move[0], move[1], move[2], move[3])
       if (!path) {
-        throw new error("invalid move. validate move first before applying")
+        throw new error('invalid move. validate move first before applying')
       }
       for (let i = 0; i < path.length; i++) {
         let current = path[i]
