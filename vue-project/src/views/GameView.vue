@@ -114,7 +114,7 @@ const gameInProgress = computed(() => {
 const destoryParticles = ref(false)
 
 const youWin = computed(() => {
-  return !destoryParticles.value && game.value && game.value.winner === playerName.value
+  return game.value && game.value.winner === playerName.value
 })
 
 watch(youWin, () => {
@@ -168,7 +168,7 @@ watch(err, () => {
 
 <template>
   <div class="game">
-    <Confetti v-if="youWin" />
+    <Confetti v-if="youWin && !destoryParticles" />
     <div id="game-header">
       <h1>{{ gameTitle }}</h1>
       <hr />
