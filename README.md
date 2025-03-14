@@ -7,8 +7,6 @@ A simple online checkers demo. There are two code projects: [vue-project](/vue-p
 TODO
 ----
 
-* Fix jump/path finding alg bug. Unit test.
-* Add tsParticles confetti https://confetti.js.org/ to win screen.
 * Add sqlite persistence
 * Commit nginx sites. Upgrade to HTTP2.
 * Draw checkerboard
