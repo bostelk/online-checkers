@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import CheckerTable from '../components/CheckerTable.vue'
+import Confetti from '../components/Confetti.vue'
+
 import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { ref, reactive, watch, computed, onMounted, provide } from 'vue'
 import { socket } from '@/socket'
 import { checkerUrl } from '@/assetUrl'
 import { checkersAPI } from '@/api'
+import { playerName } from '@/player'
 
 const route = useRoute()
 const game = reactive({})
@@ -106,6 +109,20 @@ const gameInProgress = computed(() => {
   return game.value && game.value.player1 && game.value.player2 && !game.value.winner
 })
 
+// The fullscreen canvas prevents all click events from passing through to the page.
+// Destroy the particles/canvas after they've finished playing to restore clicks.
+const destoryParticles = ref(false)
+
+const youWin = computed(() => {
+  return !destoryParticles.value && game.value && game.value.winner === playerName.value
+})
+
+watch(youWin, () => {
+  setTimeout(() => {
+    destoryParticles.value = true
+  }, 3400)
+})
+
 const infoIcon = computed(() => {
   if (gameInProgress.value) {
     return checkerUrl(currentTurnColor.value, 16)
@@ -151,6 +168,7 @@ watch(err, () => {
 
 <template>
   <div class="game">
+    <Confetti v-if="youWin" />
     <div id="game-header">
       <h1>{{ gameTitle }}</h1>
       <hr />
