@@ -118,9 +118,11 @@ const youWin = computed(() => {
 })
 
 watch(youWin, () => {
-  setTimeout(() => {
-    destoryParticles.value = true
-  }, 3400)
+  if (youWin.value) {
+    setTimeout(() => {
+      destoryParticles.value = true
+    }, 3400)
+  }
 })
 
 const infoIcon = computed(() => {
