@@ -1,13 +1,13 @@
 import { CheckerMove } from '../game'
-import { all, findOne } from '../database'
+import { allGames, findGame, insertMove, updateGame } from '../database'
 
 export default function handler(socketServer, socket) {
   const moveChecker = (payload: { id: string; move: CheckerMove }) => {
     let { id, move } = payload
-    let game = findOne(id)
+    let game = findGame(id)
     if (game.inProgress() && game.isPlayerTurn(socket.data.username) && game.validMove(move)) {
       game.applyMove(move)
-      game.moves.push(move)
+      insertMove(game, move)
       let win = game.checkWin()
       if (win) {
         const colorToPlayer = {
@@ -17,6 +17,7 @@ export default function handler(socketServer, socket) {
         game.winner = colorToPlayer[win]
         game.loser = colorToPlayer[game.getOppositeColor(win)]
       }
+      updateGame(game)
       socketServer.to(id).emit('game', game)
     } else {
       console.warn('move is invalid: ' + move)
@@ -26,7 +27,7 @@ export default function handler(socketServer, socket) {
   const joinGame = (payload: { id: string }) => {
     socket.join(payload.id)
     console.log('a player has joined game: ' + payload.id)
-    let game = findOne(payload.id)
+    let game = findGame(payload.id)
     if (game) {
       if (game.player1 === '' || game.player1 === socket.data.username) {
         game.player1 = socket.data.username
@@ -36,8 +37,7 @@ export default function handler(socketServer, socket) {
         game.player2Color = socket.data.color
       }
 
-      let now = Date.now()
-      game.updated_at = now
+      updateGame(game)
 
       // Broadcast to other players.
       socket.to(game.id).emit('game:join', {
@@ -49,7 +49,7 @@ export default function handler(socketServer, socket) {
   const leaveGame = (payload: { id: string }) => {
     socket.leave(payload.id)
     console.log('a player has left game: ' + payload.id)
-    let game = findOne(payload.id)
+    let game = findGame(payload.id)
     if (game) {
       if (game.player1 === socket.data.username) {
         game.player1 = ''
@@ -63,8 +63,7 @@ export default function handler(socketServer, socket) {
         // Players have forfeit.
       }
 
-      let now = Date.now()
-      game.updated_at = now
+      updateGame(game)
 
       // Broadcast to other players.
       socket.to(game.id).emit('game:leave', {
@@ -74,7 +73,7 @@ export default function handler(socketServer, socket) {
     }
   }
   const disconnecting = () => {
-    Object.entries(all()).forEach(([id, game]) => {
+    Object.entries(allGames()).forEach(([id, game]) => {
       let didLeave = false
       if (game.player1 === socket.data.username) {
         game.player1 = ''

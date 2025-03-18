@@ -7,7 +7,7 @@ A simple online checkers demo. There are two code projects: [vue-project](/vue-p
 TODO
 ----
 
-* Add sqlite persistence
+* One jump is valid when two or three are available.
 * Commit nginx sites. Upgrade to HTTP2.
 * Draw checkerboard
 * Write about page
