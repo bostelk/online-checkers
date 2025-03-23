@@ -3,6 +3,17 @@ import { Game } from '../src/game'
 
 describe('test valid moves', () => {
 
+    test('test empty move', () => {
+        let g = new Game('','','',false,'','','',8,8)
+
+        /**
+         * Test the following scenario: empty (.) moves forward (.).
+         * . . .
+         * . . .
+         */
+        expect(g.validMove([1, 3, 0, 4])).toBeFalsy()
+    })
+
     test('test red checker move forward', () => {
         let g = new Game('','','',false,'','','',8,8)
 
@@ -141,9 +152,10 @@ describe('test valid moves', () => {
 
         /**
          * Test the following scenario: black (b) must jump red (1).
-         * . . . 1
-         * m . r .
-         * . b . .
+         *   2 3 4 5
+         * 3 . . . 1
+         * 4 m . r .
+         * 5 . b . .
          */
         expect(g.validMove([3,5, 5,3])).toBeTruthy()
         expect(g.validMove([3,5, 2,4])).toBeFalsy()
@@ -177,7 +189,7 @@ describe('test valid moves', () => {
         expect(g.validMove([3,5, 5,3])).toBeFalsy()
     })
 
-     test('test red checker can jump black twice', () => {
+     test('test red checker can jump black once or twice', () => {
         let g = new Game('','','',false,'','','',8,8)
 
         g.checkers[6][0] = '' // Empty space
@@ -187,18 +199,20 @@ describe('test valid moves', () => {
         g.checkers[5][1] = 'b'
 
         /**
-         * Test the following scenario: red (r) cannot jump red (1).
-         * . . . . r .
-         * . . . b . .
-         * . . 1 . . .
-         * . b . b . .
-         * 2 . . . 2 .
+         * Test the following scenario: red (r) can jump black (b) once (z) or twice (y).
+         *   0 1 2 3 4 5
+         * 2 . . . . r .
+         * 3 . . . b . .
+         * 4 . . z . . .
+         * 5 . b . b . .
+         * 6 y . . . y .
          */
+        expect(g.validMove([4,2, 2,4])).toBeTruthy()
         expect(g.validMove([4,2, 0,6])).toBeTruthy()
         expect(g.validMove([4,2, 6,4])).toBeTruthy()
     })
 
-    test('test black checker can jump red twice', () => {
+    test('test black checker can jump red once or twice', () => {
         let g = new Game('','','',false,'','','',8,8)
 
         g.checkers[1][7] = '' // Empty space
@@ -208,15 +222,34 @@ describe('test valid moves', () => {
         g.checkers[2][6] = 'r'
 
         /**
-         * Test the following scenario: black (b) can jump red (1) twice (2).
-         * . 2 . . . 2
-         * . . r . r .
-         * . . . 1 . .
-         * . . r . . .
-         * . b . . . .
+         * Test the following scenario: black (b) can jump red (r) once (z) or twice (y).
+         *   2 3 4 5 6 7
+         * 1 . y . . . y
+         * 2 . . r . r .
+         * 3 . . . z . .
+         * 4 . . r . . .
+         * 5 . b . . . .
          */
+        expect(g.validMove([3,5, 5,3])).toBeTruthy()
         expect(g.validMove([3,5, 1,3])).toBeTruthy()
         expect(g.validMove([3,5, 7,1])).toBeTruthy()
+    })
+
+    test('test red king checker can jump black many times', () => {
+        let g = new Game('','','',false,'','','',8,8)
+        g.checkers = [
+            ['', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', ''],
+            ['', '', 'r', '', 'r', '', 'r', '', ''],
+            ['', '', '', '', '', '', '', '', ''],
+            ['', '', 'r', '', 'r', '', 'r', '', ''],
+            ['', '', '', '', '', '', '', '', ''],
+            ['', '', 'r', '', 'r', '', 'r', '', ''],
+            ['', '', '', '', '', '', '', 'c', ''],
+        ]
+
+        let paths = g.findPaths(7, 7)
+        expect(paths.length).toBe(8)
     })
 
 })

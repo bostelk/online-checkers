@@ -145,7 +145,8 @@ export class Game {
     return x + ',' + y
   }
   findPaths(x: number, y: number, goalX?: number, goalY?: number, maxSteps: number = 100): any[] {
-    let paths = []
+    let paths0 = [] // Graph stack.
+    let paths1 = [] // Result.
     let path = []
     let findAll = !goalX && !goalY
     const opponentColor = this.getOppositeColor(this.getColor(x, y))
@@ -199,63 +200,61 @@ export class Game {
     let steps = 0
     let visited = new Set<string>()
     const root = [x, y]
-    let current = root
-    let stack: any[] = getNeighbours(current[0], current[1])
-    path.push(root)
+    let current = null
+    let stack: any[] = [root]
+    let jump = false
     while (stack.length > 0) {
       if (steps >= maxSteps) {
         console.warn('jump validation exceeded allowed number of steps')
         break
       }
       current = stack.pop()
+      path = paths0.length > 0 ? paths0.pop() : []
       // Add neighbour to path when move is a jump.
-      let delta = [current[0] - path[path.length - 1][0], current[1] - path[path.length - 1][1]]
-      let jump = Math.abs(delta[0]) > 1 || Math.abs(delta[1]) > 1
-      if (jump) {
-        let middle = [
-          Math.floor((current[0] + path[path.length - 1][0]) / 2),
-          Math.floor((current[1] + path[path.length - 1][1]) / 2),
-        ]
-        path.push(middle)
+      if (path.length > 0) {
+        let delta = [current[0] - path[path.length - 1][0], current[1] - path[path.length - 1][1]]
+        jump = Math.abs(delta[0]) > 1 || Math.abs(delta[1]) > 1
+        if (jump) {
+          let middle = [
+            Math.floor((current[0] + path[path.length - 1][0]) / 2),
+            Math.floor((current[1] + path[path.length - 1][1]) / 2),
+          ]
+          path.push(middle)
+        }
       }
       path.push(current)
       if (current[0] == goalX && current[1] == goalY) {
         // Terminate path and search.
-        paths.push(path)
+        paths1.push(structuredClone(path))
         path = [root]
         break
       }
       let key = this.moveKey(current[0], current[1])
       if (!visited.has(key)) {
         visited.add(key)
-        // A consecutive jump is a valid move.
-        if (jump) {
-          let neighbours = getNeighbours(current[0], current[1], true)
-          if (neighbours.length === 0) {
-            // Terminate path.
-            if (findAll) {
-              paths.push(path)
-            }
-            path = [root]
-          }
-          stack = stack.concat(neighbours)
-        } else {
-          // Terminate path.
-          if (findAll) {
-            paths.push(path)
-          }
-          path = [root]
+        let neighbours = []
+        // Cannot move more than once.
+        let movedOnce = path.length >= 2 && !jump
+        if (!movedOnce || jump) {
+          neighbours = getNeighbours(current[0], current[1], jump)
         }
+        if (path.length > 1 && findAll) {
+          paths1.push(structuredClone(path))
+        }
+        stack = stack.concat(neighbours)
+        neighbours.forEach((_) => {
+          paths0.push(structuredClone(path))
+        })
       }
       steps += 1
     }
 
     // Terminate path.
     if (path.length > 1 && findAll) {
-      paths.push(path)
+      paths1.push(path)
     }
 
-    return paths
+    return paths1
   }
   findPath(x: number, y: number, goalX?: number, goalY?: number, maxSteps: number = 100): any[] {
     let paths = this.findPaths(x, y, goalX, goalY, maxSteps)
