@@ -225,7 +225,7 @@ export class Game {
       path.push(current)
       if (current[0] == goalX && current[1] == goalY) {
         // Terminate path and search.
-        paths1.push(structuredClone(path))
+        paths1.push([...path])
         path = [root]
         break
       }
@@ -239,11 +239,11 @@ export class Game {
           neighbours = getNeighbours(current[0], current[1], jump)
         }
         if (path.length > 1 && findAll) {
-          paths1.push(structuredClone(path))
+          paths1.push([...path])
         }
         stack = stack.concat(neighbours)
         neighbours.forEach((_) => {
-          paths0.push(structuredClone(path))
+          paths0.push([...path])
         })
       }
       steps += 1
